@@ -15,9 +15,11 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.alavpa.colors.R
 import com.alavpa.colors.ui.theme.ColorsTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -53,12 +55,12 @@ fun RestartBottomSheetContent(
             .padding(bottom = 32.dp)
     ) {
         Text(
-            text = "Restart Options",
+            text = stringResource(R.string.restart_options_title),
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold
         )
         Spacer(modifier = Modifier.padding(8.dp))
-        Text("Choose how you would like to restart the game.")
+        Text(stringResource(R.string.restart_options_message))
         Spacer(modifier = Modifier.padding(16.dp))
         
         Button(
@@ -68,7 +70,7 @@ fun RestartBottomSheetContent(
             },
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Reset Current Board")
+            Text(stringResource(R.string.reset_current_board))
         }
 
         Spacer(modifier = Modifier.padding(8.dp))
@@ -83,7 +85,7 @@ fun RestartBottomSheetContent(
                 containerColor = MaterialTheme.colorScheme.error
             )
         ) {
-            Text("Restart from Level 1")
+            Text(stringResource(R.string.restart_from_level_1))
         }
 
         Spacer(modifier = Modifier.padding(8.dp))
@@ -92,7 +94,7 @@ fun RestartBottomSheetContent(
             onClick = onDismiss,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Close")
+            Text(stringResource(R.string.close))
         }
     }
 }

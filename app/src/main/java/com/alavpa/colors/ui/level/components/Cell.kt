@@ -13,8 +13,8 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.alavpa.colors.domain.model.RgbColor
+import com.alavpa.colors.ui.theme.GameConstants
 
 @Composable
 fun Cell(
@@ -28,9 +28,9 @@ fun Cell(
 
     Box(
         modifier = modifier
-            .padding(2.dp)
-            .alpha(if (isDimmed) 0.3f else 1.0f)
-            .sizeIn(minWidth = 48.dp, minHeight = 48.dp)
+            .padding(GameConstants.CellPadding)
+            .alpha(if (isDimmed) GameConstants.DimmedAlpha else 1.0f)
+            .sizeIn(minWidth = GameConstants.MinCellSize, minHeight = GameConstants.MinCellSize)
             .aspectRatio(1f)
             .background(color, shape)
             .clip(shape)

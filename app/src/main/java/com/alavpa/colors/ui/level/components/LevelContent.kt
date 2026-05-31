@@ -7,8 +7,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.alavpa.colors.domain.model.RgbColor
+import com.alavpa.colors.ui.theme.GameConstants
 
 @Composable
 fun LevelContent(
@@ -22,7 +22,7 @@ fun LevelContent(
 
     Column(
         modifier = Modifier
-            .padding(16.dp)
+            .padding(GameConstants.BoardPadding)
             .aspectRatio(
                 ratio = horizontalSize.toFloat() / verticalSize.toFloat(),
                 matchHeightConstraintsFirst = true

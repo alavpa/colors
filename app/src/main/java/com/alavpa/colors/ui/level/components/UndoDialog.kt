@@ -5,7 +5,9 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import com.alavpa.colors.R
 import com.alavpa.colors.ui.theme.ColorsTheme
 
 @Composable
@@ -15,16 +17,16 @@ fun UndoDialog(
 ) {
     AlertDialog(
         onDismissRequest = { /* Do nothing to prevent dismissal on tap outside */ },
-        title = { Text("Mistake!") },
-        text = { Text("You clicked the wrong color. Watch an ad to keep your progress, or reset the board.") },
+        title = { Text(stringResource(R.string.undo_mistake_title)) },
+        text = { Text(stringResource(R.string.undo_mistake_message)) },
         confirmButton = {
             Button(onClick = onUndo) {
-                Text("Watch Ad to Undo")
+                Text(stringResource(R.string.watch_ad_to_undo))
             }
         },
         dismissButton = {
             TextButton(onClick = onCancel) {
-                Text("Reset Board")
+                Text(stringResource(R.string.reset_board))
             }
         }
     )

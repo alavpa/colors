@@ -2,6 +2,7 @@ package com.alavpa.colors.ui.level
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.alavpa.colors.domain.model.GameRules
 import com.alavpa.colors.domain.repository.UserPreferencesRepository
 import com.alavpa.colors.domain.usecase.CellClickResult
 import com.alavpa.colors.domain.usecase.GetHintUseCase
@@ -127,48 +128,40 @@ class LevelViewModel @Inject constructor(
     fun onCellClick(row: Int, col: Int) {
         val currentState = _uiState.value
         if (currentState is LevelUiState.Success) {
-            val result = processCellClickUseCase(
-                currentBoard = currentState.board,
-                currentColor = currentState.currentColorBeingCleared,
-                row = row,
-                col = col
-            )
+            viewModelScope.launch {
+                val result = processCellClickUseCase(
+                    currentBoard = currentState.board,
+                    currentColor = currentState.currentColorBeingCleared,
+                    row = row,
+                    col = col
+                )
 
-            when (result) {
-                is CellClickResult.Success -> {
-                    if (result.isLevelCompleted) {
-                        val nextLevelId = currentState.board.level.id + 1
-                        if (!currentState.isAdsRemoved && nextLevelId % 3 == 0) {
-                            viewModelScope.launch {
+                when (result) {
+                    is CellClickResult.Success -> {
+                        if (result.isLevelCompleted) {
+                            val nextLevelId = currentState.board.level.id + 1
+                            if (!currentState.isAdsRemoved && nextLevelId % 3 == 0) {
                                 _uiEvent.emit(LevelUiEvent.ShowInterstitial {
                                     loadLevel(nextLevelId)
                                 })
+                            } else {
+                                loadLevel(nextLevelId)
                             }
                         } else {
-                            loadLevel(nextLevelId)
+                            _uiState.value = currentState.copy(
+                                board = result.newBoard,
+                                currentColorBeingCleared = result.nextColorToClear
+                            )
                         }
-                    } else {
-                        _uiState.value = currentState.copy(
-                            board = result.newBoard,
-                            currentColorBeingCleared = result.nextColorToClear
-                        )
                     }
-                }
 
-                CellClickResult.Reset -> {
-                    if (currentState.isAdsRemoved) {
-                        // If ads are removed, maybe we just reset or give a free undo?
-                        // For now, let's just reset as per original logic if ads are removed, 
-                        // or we could show the dialog anyway but with a "Free Undo" button.
-                        // Let's show the dialog to give the user a choice.
-                        _uiState.value = currentState.copy(showUndoDialog = true)
-                    } else {
+                    CellClickResult.Reset -> {
                         _uiState.value = currentState.copy(showUndoDialog = true)
                     }
-                }
 
-                CellClickResult.Ignore -> {
-                    // Do nothing
+                    CellClickResult.Ignore -> {
+                        // Do nothing
+                    }
                 }
             }
         }
@@ -213,7 +206,7 @@ class LevelViewModel @Inject constructor(
                 onRewarded = {
                     viewModelScope.launch {
                         val currentHints = userPreferencesRepository.remainingHints.first()
-                        userPreferencesRepository.setRemainingHints(currentHints + 3)
+                        userPreferencesRepository.setRemainingHints(currentHints + GameRules.REWARDS_PER_AD)
                     }
                 },
                 onDismissed = {}
@@ -257,8 +250,8 @@ class LevelViewModel @Inject constructor(
                         remainingHints = currentState.remainingHints - 1
                     )
 
-                    // Remove hint after 2 seconds
-                    kotlinx.coroutines.delay(2000)
+                    // Remove hint after delay
+                    kotlinx.coroutines.delay(GameRules.HINT_DELAY_MS)
                     updateSuccessState { it.copy(hintedColor = null) }
                 }
             }

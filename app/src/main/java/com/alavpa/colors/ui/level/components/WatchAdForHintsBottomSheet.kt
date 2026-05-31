@@ -13,9 +13,11 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.alavpa.colors.R
 import com.alavpa.colors.ui.theme.ColorsTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -36,12 +38,12 @@ fun WatchAdForHintsBottomSheet(
                 .padding(bottom = 32.dp)
         ) {
             Text(
-                text = "Out of Hints!",
+                text = stringResource(R.string.out_of_hints_title),
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold
             )
             Spacer(modifier = Modifier.padding(8.dp))
-            Text("Watch a short video to get 3 hints for free and continue playing.")
+            Text(stringResource(R.string.out_of_hints_message))
             Spacer(modifier = Modifier.padding(16.dp))
             Button(
                 onClick = {
@@ -50,7 +52,7 @@ fun WatchAdForHintsBottomSheet(
                 },
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Watch Ad for 3 Hints")
+                Text(stringResource(R.string.watch_ad_for_hints))
             }
         }
     }

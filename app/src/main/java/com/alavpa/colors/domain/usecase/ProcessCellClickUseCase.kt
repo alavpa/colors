@@ -2,6 +2,8 @@ package com.alavpa.colors.domain.usecase
 
 import com.alavpa.colors.domain.model.LevelBoard
 import com.alavpa.colors.domain.model.RgbColor
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 sealed class CellClickResult {
@@ -15,16 +17,16 @@ sealed class CellClickResult {
 }
 
 class ProcessCellClickUseCase @Inject constructor() {
-    operator fun invoke(
+    suspend operator fun invoke(
         currentBoard: LevelBoard,
         currentColor: RgbColor?,
         row: Int,
         col: Int
-    ): CellClickResult {
-        val clickedColor = currentBoard.grid[row][col] ?: return CellClickResult.Ignore
+    ): CellClickResult = withContext(Dispatchers.Default) {
+        val clickedColor = currentBoard.grid[row][col] ?: return@withContext CellClickResult.Ignore
 
         if (currentColor != null && currentColor != clickedColor) {
-            return CellClickResult.Reset
+            return@withContext CellClickResult.Reset
         }
 
         val newGrid = currentBoard.grid.mapIndexed { r, rows ->
@@ -36,7 +38,7 @@ class ProcessCellClickUseCase @Inject constructor() {
         val colorStillExists = newGrid.flatten().contains(clickedColor)
         val allCleared = newGrid.flatten().all { it == null }
 
-        return CellClickResult.Success(
+        CellClickResult.Success(
             newBoard = currentBoard.copy(grid = newGrid),
             nextColorToClear = if (colorStillExists) clickedColor else null,
             isLevelCompleted = allCleared

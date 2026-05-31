@@ -32,7 +32,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.alavpa.colors.R
 import com.alavpa.colors.domain.infrastructure.AdManager
 import com.alavpa.colors.domain.infrastructure.SoundManager
 import com.alavpa.colors.ui.components.BannerAd
@@ -51,6 +54,7 @@ fun LevelScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
+    val resources = LocalResources.current
     val snackbarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(Unit) {
@@ -65,8 +69,8 @@ fun LevelScreen(
                 }
                 is LevelUiEvent.ShowHintConfirmation -> {
                     val result = snackbarHostState.showSnackbar(
-                        message = "Are you sure you want to use a hint? It will cost 1 hint point.",
-                        actionLabel = "Confirm",
+                        message = resources.getString(R.string.use_hint_message),
+                        actionLabel = resources.getString(R.string.confirm),
                         withDismissAction = true
                     )
                     if (result == SnackbarResult.ActionPerformed) {
@@ -114,7 +118,10 @@ fun LevelScreen(
                                 modifier = Modifier.padding(vertical = 4.dp)
                             ) {
                                 Text(
-                                    text = "LEVEL ${state.board.level.id}",
+                                    text = stringResource(
+                                        R.string.level_title,
+                                        state.board.level.id
+                                    ),
                                     style = MaterialTheme.typography.titleLarge,
                                     fontWeight = androidx.compose.ui.text.font.FontWeight.ExtraBold,
                                     color = MaterialTheme.colorScheme.onPrimaryContainer,
@@ -123,7 +130,10 @@ fun LevelScreen(
                             }
 
                             IconButton(onClick = { viewModel.onRestartClicked() }) {
-                                Icon(Icons.Default.Refresh, contentDescription = "Restart Options")
+                                Icon(
+                                    Icons.Default.Refresh,
+                                    contentDescription = stringResource(R.string.restart_options_content_description)
+                                )
                             }
                         }
                     }
@@ -139,7 +149,10 @@ fun LevelScreen(
                                 }
                                 .padding(8.dp)
                         ) {
-                            Icon(Icons.Default.Lightbulb, contentDescription = "Use Hint")
+                            Icon(
+                                Icons.Default.Lightbulb,
+                                contentDescription = stringResource(R.string.use_hint_content_description)
+                            )
                             Text(
                                 text = state.remainingHints.toString(),
                                 modifier = Modifier.padding(start = 4.dp)
@@ -149,7 +162,7 @@ fun LevelScreen(
                         IconButton(onClick = { viewModel.toggleMute() }) {
                             Icon(
                                 imageVector = if (state.isMuted) Icons.AutoMirrored.Filled.VolumeOff else Icons.AutoMirrored.Filled.VolumeUp,
-                                contentDescription = if (state.isMuted) "Unmute" else "Mute"
+                                contentDescription = stringResource(if (state.isMuted) R.string.unmute else R.string.mute)
                             )
                         }
                     }

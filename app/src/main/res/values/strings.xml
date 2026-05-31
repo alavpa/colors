@@ -1,3 +1,26 @@
 <resources>
     <string name="app_name">Colors</string>
+    <string name="level_title">LEVEL %1$d</string>
+    <string name="undo_mistake_title">Mistake!</string>
+    <string name="undo_mistake_message">You clicked the wrong color. Watch an ad to keep your progress, or reset the board.</string>
+    <string name="watch_ad_to_undo">Watch Ad to Undo</string>
+    <string name="reset_board">Reset Board</string>
+    <string name="restart_title">Restart</string>
+    <string name="restart_options_title">Restart Options</string>
+    <string name="restart_options_message">Choose how you would like to restart the game.</string>
+    <string name="restart_message">What would you like to do?</string>
+    <string name="restart_from_level_1">Restart from Level 1</string>
+    <string name="reset_current_board">Reset Current Board</string>
+    <string name="cancel">Cancel</string>
+    <string name="close">Close</string>
+    <string name="out_of_hints_title">Out of Hints!</string>
+    <string name="out_of_hints_message">Watch a short video to get 3 hints for free and continue playing.</string>
+    <string name="watch_ad_for_hints">Watch Ad for 3 Hints</string>
+    <string name="use_hint_title">Use Hint</string>
+    <string name="use_hint_message">Are you sure you want to use a hint? It will cost 1 hint point.</string>
+    <string name="confirm">Confirm</string>
+    <string name="unmute">Unmute</string>
+    <string name="mute">Mute</string>
+    <string name="use_hint_content_description">Use Hint</string>
+    <string name="restart_options_content_description">Restart Options</string>
 </resources>
