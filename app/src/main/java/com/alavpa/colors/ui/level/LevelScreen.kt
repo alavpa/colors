@@ -1,7 +1,6 @@
 package com.alavpa.colors.ui.level
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -367,9 +366,11 @@ fun LevelContent(
 
     Column(
         modifier = Modifier
-            .fillMaxSize()
             .padding(16.dp)
-            .aspectRatio(horizontalSize.toFloat() / verticalSize.toFloat())
+            .aspectRatio(
+                ratio = horizontalSize.toFloat() / verticalSize.toFloat(),
+                matchHeightConstraintsFirst = true
+            )
     ) {
         grid.forEachIndexed { rowIndex, row ->
             Row(
@@ -378,7 +379,6 @@ fun LevelContent(
                 row.forEachIndexed { colIndex, rgbColor ->
                     Cell(
                         rgbColor = rgbColor,
-                        isHinted = rgbColor != null && rgbColor == hintedColor,
                         isDimmed = anyCellHinted && (rgbColor == null || rgbColor != hintedColor),
                         modifier = Modifier.weight(1f),
                         onClick = { onCellClick(rowIndex, colIndex) }
@@ -392,7 +392,6 @@ fun LevelContent(
 @Composable
 fun Cell(
     rgbColor: RgbColor?,
-    isHinted: Boolean,
     isDimmed: Boolean,
     modifier: Modifier = Modifier,
     onClick: () -> Unit
@@ -407,10 +406,6 @@ fun Cell(
             .sizeIn(minWidth = 48.dp, minHeight = 48.dp)
             .aspectRatio(1f)
             .background(color, shape)
-            .then(
-                if (isHinted) Modifier.border(6.dp, Color(0xFF00E676), shape) // High-contrast Neon Green
-                else Modifier
-            )
             .clip(shape)
             .clickable(enabled = rgbColor != null) { onClick() }
     )
