@@ -25,6 +25,7 @@ class UserPreferencesRepositoryImpl @Inject constructor(
         val IS_ADS_REMOVED = booleanPreferencesKey("is_ads_removed")
         val REMAINING_HINTS = intPreferencesKey("remaining_hints")
         val CURRENT_LEVEL = intPreferencesKey("current_level")
+        val IS_MUTED = booleanPreferencesKey("is_muted")
     }
 
     override val isAdsRemoved: Flow<Boolean> = context.dataStore.data.map { preferences ->
@@ -37,6 +38,10 @@ class UserPreferencesRepositoryImpl @Inject constructor(
 
     override val currentLevel: Flow<Int> = context.dataStore.data.map { preferences ->
         preferences[PreferencesKeys.CURRENT_LEVEL] ?: 1 // Start at level 1
+    }
+
+    override val isMuted: Flow<Boolean> = context.dataStore.data.map { preferences ->
+        preferences[PreferencesKeys.IS_MUTED] ?: false
     }
 
     override suspend fun setAdsRemoved(removed: Boolean) {
@@ -54,6 +59,12 @@ class UserPreferencesRepositoryImpl @Inject constructor(
     override suspend fun setCurrentLevel(level: Int) {
         context.dataStore.edit { preferences ->
             preferences[PreferencesKeys.CURRENT_LEVEL] = level
+        }
+    }
+
+    override suspend fun setMuted(muted: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[PreferencesKeys.IS_MUTED] = muted
         }
     }
 }

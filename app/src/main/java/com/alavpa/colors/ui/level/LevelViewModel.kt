@@ -20,6 +20,7 @@ import kotlinx.coroutines.flow.first
 sealed interface LevelUiEvent {
     data class ShowInterstitial(val onDismissed: () -> Unit) : LevelUiEvent
     data class ShowRewarded(val onRewarded: () -> Unit, val onDismissed: () -> Unit) : LevelUiEvent
+    data class ShowHintConfirmation(val onConfirmed: () -> Unit) : LevelUiEvent
 }
 
 @HiltViewModel
@@ -47,6 +48,11 @@ class LevelViewModel @Inject constructor(
             }
         }
         viewModelScope.launch {
+            userPreferencesRepository.isMuted.collectLatest { isMuted ->
+                updateSuccessState { it.copy(isMuted = isMuted) }
+            }
+        }
+        viewModelScope.launch {
             val savedLevel = userPreferencesRepository.currentLevel.first()
             loadLevel(savedLevel)
         }
@@ -71,13 +77,15 @@ class LevelViewModel @Inject constructor(
                 val board = getLevelUseCase(levelId)
                 val isAdsRemoved = userPreferencesRepository.isAdsRemoved.first()
                 val hints = userPreferencesRepository.remainingHints.first()
+                val isMuted = userPreferencesRepository.isMuted.first()
                 userPreferencesRepository.setCurrentLevel(levelId)
 
                 _uiState.value = LevelUiState.Success(
                     board = board,
                     initialBoard = board,
                     isAdsRemoved = isAdsRemoved,
-                    remainingHints = hints
+                    remainingHints = hints,
+                    isMuted = isMuted
                 )
             } catch (e: Exception) {
                 _uiState.value = LevelUiState.Error(e.message ?: "Unknown error")
@@ -87,6 +95,32 @@ class LevelViewModel @Inject constructor(
 
     fun restartGame() {
         loadLevel(1)
+        updateSuccessState { it.copy(showRestartOptions = false) }
+    }
+
+    fun onRestartClicked() {
+        updateSuccessState { it.copy(showRestartOptions = true) }
+    }
+
+    fun onRestartOptionsDismissed() {
+        updateSuccessState { it.copy(showRestartOptions = false) }
+    }
+
+    fun resetBoard() {
+        updateSuccessState {
+            it.copy(
+                board = it.initialBoard,
+                currentColorBeingCleared = null,
+                showRestartOptions = false
+            )
+        }
+    }
+
+    fun toggleMute() {
+        viewModelScope.launch {
+            val currentMuted = userPreferencesRepository.isMuted.first()
+            userPreferencesRepository.setMuted(!currentMuted)
+        }
     }
 
     fun onCellClick(row: Int, col: Int) {
@@ -185,7 +219,15 @@ class LevelViewModel @Inject constructor(
         }
     }
 
-    fun useHint() {
+    fun onHintClicked() {
+        viewModelScope.launch {
+            _uiEvent.emit(LevelUiEvent.ShowHintConfirmation {
+                useHint()
+            })
+        }
+    }
+
+    private fun useHint() {
         viewModelScope.launch {
             val currentState = _uiState.value
             if (currentState is LevelUiState.Success && currentState.remainingHints > 0) {

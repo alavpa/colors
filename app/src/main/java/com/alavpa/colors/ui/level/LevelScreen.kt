@@ -12,8 +12,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.sizeIn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.VolumeOff
+import androidx.compose.material.icons.automirrored.filled.VolumeUp
 import androidx.compose.material.icons.filled.Lightbulb
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -24,6 +28,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -36,12 +44,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.alavpa.colors.domain.model.RgbColor
 
 import androidx.compose.ui.platform.LocalContext
 import android.app.Activity
+import com.alavpa.colors.ui.SoundManager
 import com.alavpa.colors.ui.ads.AdManager
 import com.alavpa.colors.ui.components.BannerAd
 
@@ -50,11 +61,13 @@ import com.alavpa.colors.ui.components.BannerAd
 fun LevelScreen(
     viewModel: LevelViewModel,
     adManager: AdManager,
+    soundManager: SoundManager,
     modifier: Modifier = Modifier
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
     var showShopDialog by remember { mutableStateOf(false) }
+    val snackbarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(Unit) {
         viewModel.uiEvent.collect { event ->
@@ -65,6 +78,16 @@ fun LevelScreen(
                 }
                 is LevelUiEvent.ShowRewarded -> {
                     adManager.showRewarded(activity, event.onRewarded, event.onDismissed)
+                }
+                is LevelUiEvent.ShowHintConfirmation -> {
+                    val result = snackbarHostState.showSnackbar(
+                        message = "Are you sure you want to use a hint? It will cost 1 hint point.",
+                        actionLabel = "Confirm",
+                        withDismissAction = true
+                    )
+                    if (result == SnackbarResult.ActionPerformed) {
+                        event.onConfirmed()
+                    }
                 }
             }
         }
@@ -86,14 +109,41 @@ fun LevelScreen(
         )
     }
 
+    if (uiState is LevelUiState.Success && (uiState as LevelUiState.Success).showRestartOptions) {
+        RestartDialog(
+            onRestartFromLevel1 = { viewModel.restartGame() },
+            onResetBoard = { viewModel.resetBoard() },
+            onDismiss = { viewModel.onRestartOptionsDismissed() }
+        )
+    }
+
     Scaffold(
         modifier = modifier.fillMaxSize(),
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
                 title = {
                     val state = uiState
                     if (state is LevelUiState.Success) {
-                        Text("Level ${state.board.level.id}")
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Surface(
+                                color = MaterialTheme.colorScheme.primaryContainer,
+                                shape = RoundedCornerShape(16.dp),
+                                modifier = Modifier.padding(vertical = 4.dp)
+                            ) {
+                                Text(
+                                    text = "LEVEL ${state.board.level.id}",
+                                    style = MaterialTheme.typography.titleLarge,
+                                    fontWeight = androidx.compose.ui.text.font.FontWeight.ExtraBold,
+                                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
+                                )
+                            }
+
+                            IconButton(onClick = { viewModel.onRestartClicked() }) {
+                                Icon(Icons.Default.Refresh, contentDescription = "Restart Options")
+                            }
+                        }
                     }
                 },
                 actions = {
@@ -102,7 +152,9 @@ fun LevelScreen(
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier
-                                .clickable { viewModel.useHint() }
+                                .clickable { 
+                                    viewModel.onHintClicked()
+                                }
                                 .padding(8.dp)
                         ) {
                             Icon(Icons.Default.Lightbulb, contentDescription = "Use Hint")
@@ -111,8 +163,17 @@ fun LevelScreen(
                                 modifier = Modifier.padding(start = 4.dp)
                             )
                         }
+
+                        IconButton(onClick = { viewModel.toggleMute() }) {
+                            Icon(
+                                imageVector = if (state.isMuted) Icons.AutoMirrored.Filled.VolumeOff else Icons.AutoMirrored.Filled.VolumeUp,
+                                contentDescription = if (state.isMuted) "Unmute" else "Mute"
+                            )
+                        }
                     }
-                    IconButton(onClick = { showShopDialog = true }) {
+                    IconButton(onClick = { 
+                        showShopDialog = true 
+                    }) {
                         Icon(Icons.Default.ShoppingCart, contentDescription = "Shop")
                     }
                 }
@@ -142,7 +203,12 @@ fun LevelScreen(
                         verticalSize = state.board.level.verticalSize,
                         horizontalSize = state.board.level.horizontalSize,
                         hintedColor = state.hintedColor,
-                        onCellClick = { row, col -> viewModel.onCellClick(row, col) }
+                        onCellClick = { row, col -> 
+                            if (!state.isMuted) {
+                                soundManager.playTapSound()
+                            }
+                            viewModel.onCellClick(row, col) 
+                        }
                     )
                 }
 
@@ -239,6 +305,47 @@ fun UndoDialog(
 }
 
 @Composable
+fun RestartDialog(
+    onRestartFromLevel1: () -> Unit,
+    onResetBoard: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Restart") },
+        text = { Text("What would you like to do?") },
+        confirmButton = {
+            Button(
+                onClick = onRestartFromLevel1,
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.error
+                )
+            ) {
+                Text("Restart from Level 1")
+            }
+        },
+        dismissButton = {
+            Column(modifier = Modifier.fillMaxWidth()) {
+                Button(
+                    onClick = onResetBoard,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Reset Current Board")
+                }
+                Spacer(modifier = Modifier.padding(4.dp))
+                TextButton(
+                    onClick = onDismiss,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Cancel")
+                }
+            }
+        }
+    )
+}
+
+@Composable
 fun LevelContent(
     grid: List<List<RgbColor?>>,
     verticalSize: Int,
@@ -246,6 +353,8 @@ fun LevelContent(
     hintedColor: RgbColor?,
     onCellClick: (Int, Int) -> Unit
 ) {
+    val anyCellHinted = hintedColor != null
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -260,6 +369,7 @@ fun LevelContent(
                     Cell(
                         rgbColor = rgbColor,
                         isHinted = rgbColor != null && rgbColor == hintedColor,
+                        isDimmed = anyCellHinted && (rgbColor == null || rgbColor != hintedColor),
                         modifier = Modifier.weight(1f),
                         onClick = { onCellClick(rowIndex, colIndex) }
                     )
@@ -273,21 +383,25 @@ fun LevelContent(
 fun Cell(
     rgbColor: RgbColor?,
     isHinted: Boolean,
+    isDimmed: Boolean,
     modifier: Modifier = Modifier,
     onClick: () -> Unit
 ) {
     val color = rgbColor?.toComposeColor() ?: Color.Transparent
+    val shape = MaterialTheme.shapes.medium
 
     Box(
         modifier = modifier
             .padding(2.dp)
+            .alpha(if (isDimmed) 0.3f else 1.0f)
             .sizeIn(minWidth = 48.dp, minHeight = 48.dp)
             .aspectRatio(1f)
+            .background(color, shape)
             .then(
-                if (isHinted) Modifier.border(4.dp, Color.White, MaterialTheme.shapes.small)
+                if (isHinted) Modifier.border(6.dp, Color(0xFF00E676), shape) // High-contrast Neon Green
                 else Modifier
             )
-            .background(color)
+            .clip(shape)
             .clickable(enabled = rgbColor != null) { onClick() }
     )
 }

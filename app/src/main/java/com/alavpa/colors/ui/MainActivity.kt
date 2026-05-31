@@ -20,6 +20,9 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var adManager: AdManager
 
+    @Inject
+    lateinit var soundManager: SoundManager
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -31,6 +34,7 @@ class MainActivity : ComponentActivity() {
                     LevelScreen(
                         viewModel = hiltViewModel(),
                         adManager = adManager,
+                        soundManager = soundManager,
                         modifier = Modifier.padding(innerPadding)
                     )
                 }
