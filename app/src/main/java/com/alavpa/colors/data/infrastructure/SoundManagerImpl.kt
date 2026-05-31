@@ -1,17 +1,18 @@
-package com.alavpa.colors.ui
+package com.alavpa.colors.data.infrastructure
 
 import android.content.Context
 import android.media.AudioAttributes
 import android.media.SoundPool
 import com.alavpa.colors.R
+import com.alavpa.colors.domain.infrastructure.SoundManager
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class SoundManager @Inject constructor(
+class SoundManagerImpl @Inject constructor(
     @param:ApplicationContext private val context: Context
-) {
+) : SoundManager {
     private val soundPool: SoundPool
     private var clickSoundId: Int = -1
 
@@ -29,13 +30,13 @@ class SoundManager @Inject constructor(
         clickSoundId = soundPool.load(context, R.raw.click_005, 1)
     }
 
-    fun playTapSound() {
+    override fun playTapSound() {
         if (clickSoundId != -1) {
             soundPool.play(clickSoundId, 1f, 1f, 1, 0, 1f)
         }
     }
 
-    fun release() {
+    override fun release() {
         soundPool.release()
     }
 }

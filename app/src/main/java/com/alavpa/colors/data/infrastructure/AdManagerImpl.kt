@@ -1,7 +1,8 @@
-package com.alavpa.colors.ui.ads
+package com.alavpa.colors.data.infrastructure
 
 import android.app.Activity
 import com.alavpa.colors.BuildConfig
+import com.alavpa.colors.domain.infrastructure.AdManager
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.interstitial.InterstitialAd
@@ -12,14 +13,15 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class AdManager @Inject constructor() {
+class AdManagerImpl @Inject constructor() : AdManager {
     private var interstitialAd: InterstitialAd? = null
     private var rewardedAd: RewardedAd? = null
 
-    fun loadInterstitial(activity: Activity) {
+    override fun loadInterstitial(activity: Any) {
+        val currentActivity = activity as? Activity ?: return
         val adRequest = AdRequest.Builder().build()
         InterstitialAd.load(
-            activity,
+            currentActivity,
             BuildConfig.ADMOB_INTERSTITIAL_ID,
             adRequest,
             object : InterstitialAdLoadCallback() {
@@ -34,12 +36,13 @@ class AdManager @Inject constructor() {
         )
     }
 
-    fun showInterstitial(activity: Activity, onAdDismissed: () -> Unit) {
+    override fun showInterstitial(activity: Any, onAdDismissed: () -> Unit) {
+        val currentActivity = activity as? Activity ?: return
         if (interstitialAd != null) {
             interstitialAd?.fullScreenContentCallback = object : com.google.android.gms.ads.FullScreenContentCallback() {
                 override fun onAdDismissedFullScreenContent() {
                     interstitialAd = null
-                    loadInterstitial(activity)
+                    loadInterstitial(currentActivity)
                     onAdDismissed()
                 }
 
@@ -48,16 +51,17 @@ class AdManager @Inject constructor() {
                     onAdDismissed()
                 }
             }
-            interstitialAd?.show(activity)
+            interstitialAd?.show(currentActivity)
         } else {
             onAdDismissed()
         }
     }
 
-    fun loadRewarded(activity: Activity) {
+    override fun loadRewarded(activity: Any) {
+        val currentActivity = activity as? Activity ?: return
         val adRequest = AdRequest.Builder().build()
         RewardedAd.load(
-            activity,
+            currentActivity,
             BuildConfig.ADMOB_REWARDED_ID,
             adRequest,
             object : RewardedAdLoadCallback() {
@@ -72,12 +76,13 @@ class AdManager @Inject constructor() {
         )
     }
 
-    fun showRewarded(activity: Activity, onUserEarnedReward: () -> Unit, onAdDismissed: () -> Unit) {
+    override fun showRewarded(activity: Any, onUserEarnedReward: () -> Unit, onAdDismissed: () -> Unit) {
+        val currentActivity = activity as? Activity ?: return
         if (rewardedAd != null) {
             rewardedAd?.fullScreenContentCallback = object : com.google.android.gms.ads.FullScreenContentCallback() {
                 override fun onAdDismissedFullScreenContent() {
                     rewardedAd = null
-                    loadRewarded(activity)
+                    loadRewarded(currentActivity)
                     onAdDismissed()
                 }
 
@@ -86,7 +91,7 @@ class AdManager @Inject constructor() {
                     onAdDismissed()
                 }
             }
-            rewardedAd?.show(activity) {
+            rewardedAd?.show(currentActivity) {
                 onUserEarnedReward()
             }
         } else {

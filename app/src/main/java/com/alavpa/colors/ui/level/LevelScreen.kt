@@ -53,8 +53,8 @@ import com.alavpa.colors.domain.model.RgbColor
 
 import androidx.compose.ui.platform.LocalContext
 import android.app.Activity
-import com.alavpa.colors.ui.SoundManager
-import com.alavpa.colors.ui.ads.AdManager
+import com.alavpa.colors.domain.infrastructure.AdManager
+import com.alavpa.colors.domain.infrastructure.SoundManager
 import com.alavpa.colors.ui.components.BannerAd
 
 @OptIn(ExperimentalMaterial3Api::class)

@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.alavpa.colors.domain.repository.UserPreferencesRepository
 import com.alavpa.colors.domain.usecase.CellClickResult
+import com.alavpa.colors.domain.usecase.GetHintUseCase
 import com.alavpa.colors.domain.usecase.GetLevelUseCase
 import com.alavpa.colors.domain.usecase.ProcessCellClickUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -28,6 +29,7 @@ sealed interface LevelUiEvent {
 class LevelViewModel @Inject constructor(
     private val getLevelUseCase: GetLevelUseCase,
     private val processCellClickUseCase: ProcessCellClickUseCase,
+    private val getHintUseCase: GetHintUseCase,
     private val userPreferencesRepository: UserPreferencesRepository
 ) : ViewModel() {
 
@@ -241,8 +243,10 @@ class LevelViewModel @Inject constructor(
             if (currentState is LevelUiState.Success && currentState.remainingHints > 0) {
                 userPreferencesRepository.setRemainingHints(currentState.remainingHints - 1)
 
-                val colorToHint = currentState.currentColorBeingCleared
-                    ?: currentState.board.grid.flatten().filterNotNull().firstOrNull()
+                val colorToHint = getHintUseCase(
+                    board = currentState.board,
+                    currentColorBeingCleared = currentState.currentColorBeingCleared
+                )
 
                 if (colorToHint != null) {
                     _uiState.value = currentState.copy(

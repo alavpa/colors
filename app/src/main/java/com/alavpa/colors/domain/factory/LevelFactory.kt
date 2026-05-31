@@ -1,12 +1,10 @@
-package com.alavpa.colors.data
+package com.alavpa.colors.domain.factory
 
 import com.alavpa.colors.domain.model.Level
 import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
-class LevelProvider @Inject constructor() {
-    fun getLevel(levelId: Int): Level {
+class LevelFactory @Inject constructor() {
+    fun createLevel(levelId: Int): Level {
         val maxCols = 5
         val maxRows = 10
         var cols = (levelId + 1) / 2 + 1
@@ -23,7 +21,6 @@ class LevelProvider @Inject constructor() {
         }
 
         val cellCount = rows * cols
-        // Ensure color count doesn't exceed total cells
         val colorCount = (levelId + 1).coerceAtMost(cellCount)
 
         return Level(
