@@ -43,6 +43,7 @@ import com.alavpa.colors.ui.level.components.LevelContent
 import com.alavpa.colors.ui.level.components.RestartDialog
 import com.alavpa.colors.ui.level.components.ShopBottomSheet
 import com.alavpa.colors.ui.level.components.UndoDialog
+import com.alavpa.colors.ui.level.components.WatchAdForHintsBottomSheet
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -88,7 +89,8 @@ fun LevelScreen(
         ShopBottomSheet(
             onDismiss = { showShopDialog = false },
             onBuyRemoveAds = { viewModel.buyRemoveAds() },
-            onBuyHints = { viewModel.buyHints(10) }
+            onBuyHints = { viewModel.buyHints(10) },
+            onWatchAdForHints = { viewModel.onWatchAdForHintsClicked() }
         )
     }
 
@@ -104,6 +106,13 @@ fun LevelScreen(
             onRestartFromLevel1 = { viewModel.restartGame() },
             onResetBoard = { viewModel.resetBoard() },
             onDismiss = { viewModel.onRestartOptionsDismissed() }
+        )
+    }
+
+    if (uiState is LevelUiState.Success && (uiState as LevelUiState.Success).showWatchAdForHintsDialog) {
+        WatchAdForHintsBottomSheet(
+            onDismiss = { viewModel.onWatchAdForHintsDismissed() },
+            onWatchAd = { viewModel.onWatchAdForHintsClicked() }
         )
     }
 

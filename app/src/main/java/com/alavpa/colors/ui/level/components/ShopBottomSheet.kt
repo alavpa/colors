@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.material3.ButtonDefaults
 import com.alavpa.colors.ui.theme.ColorsTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -23,6 +24,7 @@ fun ShopBottomSheet(
     onDismiss: () -> Unit,
     onBuyRemoveAds: () -> Unit,
     onBuyHints: () -> Unit,
+    onWatchAdForHints: () -> Unit,
     sheetState: SheetState = rememberModalBottomSheetState()
 ) {
     ModalBottomSheet(
@@ -32,6 +34,7 @@ fun ShopBottomSheet(
         ShopBottomSheetContent(
             onBuyRemoveAds = onBuyRemoveAds,
             onBuyHints = onBuyHints,
+            onWatchAdForHints = onWatchAdForHints,
             onDismiss = onDismiss
         )
     }
@@ -41,6 +44,7 @@ fun ShopBottomSheet(
 fun ShopBottomSheetContent(
     onBuyRemoveAds: () -> Unit,
     onBuyHints: () -> Unit,
+    onWatchAdForHints: () -> Unit,
     onDismiss: () -> Unit
 ) {
     Column(
@@ -66,7 +70,7 @@ fun ShopBottomSheetContent(
         ) {
             Text("Remove Ads - $0.99")
         }
-        Spacer(modifier = Modifier.padding(8.dp))
+        Spacer(modifier = Modifier.padding(4.dp))
         Button(
             onClick = {
                 onBuyHints()
@@ -76,6 +80,19 @@ fun ShopBottomSheetContent(
         ) {
             Text("10 Hints - $0.99")
         }
+        Spacer(modifier = Modifier.padding(4.dp))
+        Button(
+            onClick = {
+                onWatchAdForHints()
+                onDismiss()
+            },
+            modifier = Modifier.fillMaxWidth(),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.secondary
+            )
+        ) {
+            Text("Watch Ad for 3 Hints (FREE)")
+        }
     }
 }
 
@@ -84,6 +101,11 @@ fun ShopBottomSheetContent(
 @Composable
 fun ShopBottomSheetPreview() {
     ColorsTheme {
-        ShopBottomSheetContent(onDismiss = {}, onBuyRemoveAds = {}, onBuyHints = {})
+        ShopBottomSheetContent(
+            onDismiss = {},
+            onBuyRemoveAds = {},
+            onBuyHints = {},
+            onWatchAdForHints = {}
+        )
     }
 }

@@ -222,6 +222,17 @@ class LevelViewModel @Inject constructor(
         }
     }
 
+    fun onWatchAdForHintsClicked() {
+        viewModelScope.launch {
+            _uiEvent.emit(LevelUiEvent.ShowRewarded(
+                onRewarded = {
+                    buyHints(3)
+                },
+                onDismissed = {}
+            ))
+        }
+    }
+
     fun onHintClicked() {
         val currentState = _uiState.value
         if (currentState is LevelUiState.Success) {
@@ -231,10 +242,14 @@ class LevelViewModel @Inject constructor(
                         useHint()
                     })
                 } else {
-                    _uiEvent.emit(LevelUiEvent.ShowShop)
+                    updateSuccessState { it.copy(showWatchAdForHintsDialog = true) }
                 }
             }
         }
+    }
+
+    fun onWatchAdForHintsDismissed() {
+        updateSuccessState { it.copy(showWatchAdForHintsDialog = false) }
     }
 
     private fun useHint() {

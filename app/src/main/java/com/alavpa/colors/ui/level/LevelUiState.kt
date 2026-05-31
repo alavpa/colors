@@ -14,7 +14,8 @@ sealed interface LevelUiState {
         val showUndoDialog: Boolean = false,
         val hintedColor: RgbColor? = null,
         val isMuted: Boolean = false,
-        val showRestartOptions: Boolean = false
+        val showRestartOptions: Boolean = false,
+        val showWatchAdForHintsDialog: Boolean = false
     ) : LevelUiState
     data class Error(val message: String) : LevelUiState
 }
