@@ -12,7 +12,6 @@ import androidx.compose.material.icons.automirrored.filled.VolumeOff
 import androidx.compose.material.icons.automirrored.filled.VolumeUp
 import androidx.compose.material.icons.filled.Lightbulb
 import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -29,9 +28,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -40,8 +37,7 @@ import com.alavpa.colors.domain.infrastructure.AdManager
 import com.alavpa.colors.domain.infrastructure.SoundManager
 import com.alavpa.colors.ui.components.BannerAd
 import com.alavpa.colors.ui.level.components.LevelContent
-import com.alavpa.colors.ui.level.components.RestartDialog
-import com.alavpa.colors.ui.level.components.ShopBottomSheet
+import com.alavpa.colors.ui.level.components.RestartBottomSheet
 import com.alavpa.colors.ui.level.components.UndoDialog
 import com.alavpa.colors.ui.level.components.WatchAdForHintsBottomSheet
 
@@ -55,7 +51,6 @@ fun LevelScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
-    var showShopDialog by remember { mutableStateOf(false) }
     val snackbarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(Unit) {
@@ -78,20 +73,8 @@ fun LevelScreen(
                         event.onConfirmed()
                     }
                 }
-                is LevelUiEvent.ShowShop -> {
-                    showShopDialog = true
-                }
             }
         }
-    }
-
-    if (showShopDialog) {
-        ShopBottomSheet(
-            onDismiss = { showShopDialog = false },
-            onBuyRemoveAds = { viewModel.buyRemoveAds() },
-            onBuyHints = { viewModel.buyHints(10) },
-            onWatchAdForHints = { viewModel.onWatchAdForHintsClicked() }
-        )
     }
 
     if (uiState is LevelUiState.Success && (uiState as LevelUiState.Success).showUndoDialog) {
@@ -102,7 +85,7 @@ fun LevelScreen(
     }
 
     if (uiState is LevelUiState.Success && (uiState as LevelUiState.Success).showRestartOptions) {
-        RestartDialog(
+        RestartBottomSheet(
             onRestartFromLevel1 = { viewModel.restartGame() },
             onResetBoard = { viewModel.resetBoard() },
             onDismiss = { viewModel.onRestartOptionsDismissed() }
@@ -151,7 +134,7 @@ fun LevelScreen(
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier
-                                .clickable { 
+                                .clickable {
                                     viewModel.onHintClicked()
                                 }
                                 .padding(8.dp)
@@ -169,11 +152,6 @@ fun LevelScreen(
                                 contentDescription = if (state.isMuted) "Unmute" else "Mute"
                             )
                         }
-                    }
-                    IconButton(onClick = { 
-                        showShopDialog = true 
-                    }) {
-                        Icon(Icons.Default.ShoppingCart, contentDescription = "Shop")
                     }
                 }
             )

@@ -5,46 +5,45 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.material3.ButtonDefaults
 import com.alavpa.colors.ui.theme.ColorsTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ShopBottomSheet(
+fun RestartBottomSheet(
+    onRestartFromLevel1: () -> Unit,
+    onResetBoard: () -> Unit,
     onDismiss: () -> Unit,
-    onBuyRemoveAds: () -> Unit,
-    onBuyHints: () -> Unit,
-    onWatchAdForHints: () -> Unit,
     sheetState: SheetState = rememberModalBottomSheetState()
 ) {
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState
     ) {
-        ShopBottomSheetContent(
-            onBuyRemoveAds = onBuyRemoveAds,
-            onBuyHints = onBuyHints,
-            onWatchAdForHints = onWatchAdForHints,
+        RestartBottomSheetContent(
+            onRestartFromLevel1 = onRestartFromLevel1,
+            onResetBoard = onResetBoard,
             onDismiss = onDismiss
         )
     }
 }
 
 @Composable
-fun ShopBottomSheetContent(
-    onBuyRemoveAds: () -> Unit,
-    onBuyHints: () -> Unit,
-    onWatchAdForHints: () -> Unit,
+fun RestartBottomSheetContent(
+    onRestartFromLevel1: () -> Unit,
+    onResetBoard: () -> Unit,
     onDismiss: () -> Unit
 ) {
     Column(
@@ -54,58 +53,58 @@ fun ShopBottomSheetContent(
             .padding(bottom = 32.dp)
     ) {
         Text(
-            text = "Settings & Shop",
+            text = "Restart Options",
             style = MaterialTheme.typography.headlineSmall,
-            fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+            fontWeight = FontWeight.Bold
         )
         Spacer(modifier = Modifier.padding(8.dp))
-        Text("Support the developer and improve your game!")
+        Text("Choose how you would like to restart the game.")
+        Spacer(modifier = Modifier.padding(16.dp))
+        
+        Button(
+            onClick = {
+                onResetBoard()
+                onDismiss()
+            },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Reset Current Board")
+        }
+
         Spacer(modifier = Modifier.padding(8.dp))
+        
         Button(
             onClick = {
-                onBuyRemoveAds()
-                onDismiss()
-            },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Remove Ads - $0.99")
-        }
-        Spacer(modifier = Modifier.padding(4.dp))
-        Button(
-            onClick = {
-                onBuyHints()
-                onDismiss()
-            },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("10 Hints - $0.99")
-        }
-        Spacer(modifier = Modifier.padding(4.dp))
-        Button(
-            onClick = {
-                onWatchAdForHints()
+                onRestartFromLevel1()
                 onDismiss()
             },
             modifier = Modifier.fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.secondary
+                containerColor = MaterialTheme.colorScheme.error
             )
         ) {
-            Text("Watch Ad for 3 Hints (FREE)")
+            Text("Restart from Level 1")
+        }
+
+        Spacer(modifier = Modifier.padding(8.dp))
+
+        TextButton(
+            onClick = onDismiss,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Close")
         }
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Preview
+@Preview(showSystemUi = true)
 @Composable
-fun ShopBottomSheetPreview() {
+fun RestartBottomSheetPreview() {
     ColorsTheme {
-        ShopBottomSheetContent(
-            onDismiss = {},
-            onBuyRemoveAds = {},
-            onBuyHints = {},
-            onWatchAdForHints = {}
+        RestartBottomSheetContent(
+            onRestartFromLevel1 = {},
+            onResetBoard = {},
+            onDismiss = {}
         )
     }
 }

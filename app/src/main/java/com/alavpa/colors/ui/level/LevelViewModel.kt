@@ -10,19 +10,17 @@ import com.alavpa.colors.domain.usecase.ProcessCellClickUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-
-import kotlinx.coroutines.flow.first
 
 sealed interface LevelUiEvent {
     data class ShowInterstitial(val onDismissed: () -> Unit) : LevelUiEvent
     data class ShowRewarded(val onRewarded: () -> Unit, val onDismissed: () -> Unit) : LevelUiEvent
     data class ShowHintConfirmation(val onConfirmed: () -> Unit) : LevelUiEvent
-    data object ShowShop : LevelUiEvent
 }
 
 @HiltViewModel
@@ -209,24 +207,14 @@ class LevelViewModel @Inject constructor(
         }
     }
 
-    fun buyRemoveAds() {
-        viewModelScope.launch {
-            userPreferencesRepository.setAdsRemoved(true)
-        }
-    }
-
-    fun buyHints(count: Int) {
-        viewModelScope.launch {
-            val currentHints = userPreferencesRepository.remainingHints.first()
-            userPreferencesRepository.setRemainingHints(currentHints + count)
-        }
-    }
-
     fun onWatchAdForHintsClicked() {
         viewModelScope.launch {
             _uiEvent.emit(LevelUiEvent.ShowRewarded(
                 onRewarded = {
-                    buyHints(3)
+                    viewModelScope.launch {
+                        val currentHints = userPreferencesRepository.remainingHints.first()
+                        userPreferencesRepository.setRemainingHints(currentHints + 3)
+                    }
                 },
                 onDismissed = {}
             ))
