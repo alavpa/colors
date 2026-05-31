@@ -27,6 +27,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -35,6 +36,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -94,7 +96,7 @@ fun LevelScreen(
     }
 
     if (showShopDialog) {
-        ShopDialog(
+        ShopBottomSheet(
             onDismiss = { showShopDialog = false },
             onBuyRemoveAds = { viewModel.buyRemoveAds() },
             onBuyHints = { viewModel.buyHints(10) },
@@ -224,62 +226,70 @@ fun LevelScreen(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ShopDialog(
+fun ShopBottomSheet(
     onDismiss: () -> Unit,
     onBuyRemoveAds: () -> Unit,
     onBuyHints: () -> Unit,
     onRestart: () -> Unit
 ) {
-    AlertDialog(
-        onDismissRequest = { /* Do nothing to prevent dismissal on tap outside */ },
-        title = { Text("Settings & Shop") },
-        text = {
-            Column {
-                Text("Support the developer and improve your game!")
-                Spacer(modifier = Modifier.padding(8.dp))
-                Button(
-                    onClick = {
-                        onBuyRemoveAds()
-                        onDismiss()
-                    },
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("Remove Ads - $0.99")
-                }
-                Spacer(modifier = Modifier.padding(4.dp))
-                Button(
-                    onClick = {
-                        onBuyHints()
-                        onDismiss()
-                    },
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("10 Hints - $0.99")
-                }
-                Spacer(modifier = Modifier.padding(16.dp))
-                Text("Danger Zone", color = MaterialTheme.colorScheme.error)
-                Spacer(modifier = Modifier.padding(4.dp))
-                Button(
-                    onClick = {
-                        onRestart()
-                        onDismiss()
-                    },
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.error
-                    )
-                ) {
-                    Text("Restart from Level 1")
-                }
+    val sheetState = rememberModalBottomSheetState()
+
+    ModalBottomSheet(
+        onDismissRequest = onDismiss,
+        sheetState = sheetState
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+                .padding(bottom = 32.dp)
+        ) {
+            Text(
+                text = "Settings & Shop",
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+            )
+            Spacer(modifier = Modifier.padding(8.dp))
+            Text("Support the developer and improve your game!")
+            Spacer(modifier = Modifier.padding(8.dp))
+            Button(
+                onClick = {
+                    onBuyRemoveAds()
+                    onDismiss()
+                },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Remove Ads - $0.99")
             }
-        },
-        confirmButton = {
-            TextButton(onClick = onDismiss) {
-                Text("Close")
+            Spacer(modifier = Modifier.padding(4.dp))
+            Button(
+                onClick = {
+                    onBuyHints()
+                    onDismiss()
+                },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("10 Hints - $0.99")
+            }
+            Spacer(modifier = Modifier.padding(16.dp))
+            Text("Danger Zone", color = MaterialTheme.colorScheme.error)
+            Spacer(modifier = Modifier.padding(4.dp))
+            Button(
+                onClick = {
+                    onRestart()
+                    onDismiss()
+                },
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.error
+                )
+            ) {
+                Text("Restart from Level 1")
             }
         }
-    )
+    }
 }
 
 @Composable
