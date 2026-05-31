@@ -21,6 +21,7 @@ sealed interface LevelUiEvent {
     data class ShowInterstitial(val onDismissed: () -> Unit) : LevelUiEvent
     data class ShowRewarded(val onRewarded: () -> Unit, val onDismissed: () -> Unit) : LevelUiEvent
     data class ShowHintConfirmation(val onConfirmed: () -> Unit) : LevelUiEvent
+    data object ShowShop : LevelUiEvent
 }
 
 @HiltViewModel
@@ -220,10 +221,17 @@ class LevelViewModel @Inject constructor(
     }
 
     fun onHintClicked() {
-        viewModelScope.launch {
-            _uiEvent.emit(LevelUiEvent.ShowHintConfirmation {
-                useHint()
-            })
+        val currentState = _uiState.value
+        if (currentState is LevelUiState.Success) {
+            viewModelScope.launch {
+                if (currentState.remainingHints > 0) {
+                    _uiEvent.emit(LevelUiEvent.ShowHintConfirmation {
+                        useHint()
+                    })
+                } else {
+                    _uiEvent.emit(LevelUiEvent.ShowShop)
+                }
+            }
         }
     }
 

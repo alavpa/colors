@@ -90,6 +90,9 @@ fun LevelScreen(
                         event.onConfirmed()
                     }
                 }
+                is LevelUiEvent.ShowShop -> {
+                    showShopDialog = true
+                }
             }
         }
     }
@@ -98,8 +101,7 @@ fun LevelScreen(
         ShopBottomSheet(
             onDismiss = { showShopDialog = false },
             onBuyRemoveAds = { viewModel.buyRemoveAds() },
-            onBuyHints = { viewModel.buyHints(10) },
-            onRestart = { viewModel.restartGame() }
+            onBuyHints = { viewModel.buyHints(10) }
         )
     }
 
@@ -230,8 +232,7 @@ fun LevelScreen(
 fun ShopBottomSheet(
     onDismiss: () -> Unit,
     onBuyRemoveAds: () -> Unit,
-    onBuyHints: () -> Unit,
-    onRestart: () -> Unit
+    onBuyHints: () -> Unit
 ) {
     val sheetState = rememberModalBottomSheetState()
 
@@ -262,7 +263,7 @@ fun ShopBottomSheet(
             ) {
                 Text("Remove Ads - $0.99")
             }
-            Spacer(modifier = Modifier.padding(4.dp))
+            Spacer(modifier = Modifier.padding(8.dp))
             Button(
                 onClick = {
                     onBuyHints()
@@ -271,21 +272,6 @@ fun ShopBottomSheet(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("10 Hints - $0.99")
-            }
-            Spacer(modifier = Modifier.padding(16.dp))
-            Text("Danger Zone", color = MaterialTheme.colorScheme.error)
-            Spacer(modifier = Modifier.padding(4.dp))
-            Button(
-                onClick = {
-                    onRestart()
-                    onDismiss()
-                },
-                modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.error
-                )
-            ) {
-                Text("Restart from Level 1")
             }
         }
     }
