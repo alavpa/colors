@@ -22,6 +22,7 @@ sealed interface LevelUiEvent {
     data class ShowInterstitial(val onDismissed: () -> Unit) : LevelUiEvent
     data class ShowRewarded(val onRewarded: () -> Unit, val onDismissed: () -> Unit) : LevelUiEvent
     data class ShowHintConfirmation(val onConfirmed: () -> Unit) : LevelUiEvent
+    data class NavigateToLevel(val levelId: Int) : LevelUiEvent
 }
 
 @HiltViewModel
@@ -54,9 +55,16 @@ class LevelViewModel @Inject constructor(
                 updateSuccessState { it.copy(isMuted = isMuted) }
             }
         }
+    }
+
+    fun onScreenStarted(levelId: Int?) {
         viewModelScope.launch {
-            val savedLevel = userPreferencesRepository.currentLevel.first()
-            loadLevel(savedLevel)
+            if (levelId == null) {
+                val savedLevel = userPreferencesRepository.currentLevel.first()
+                _uiEvent.emit(LevelUiEvent.NavigateToLevel(savedLevel))
+            } else {
+                loadLevel(levelId)
+            }
         }
     }
 
@@ -96,8 +104,10 @@ class LevelViewModel @Inject constructor(
     }
 
     fun restartGame() {
-        loadLevel(1)
-        updateSuccessState { it.copy(showRestartOptions = false) }
+        viewModelScope.launch {
+            _uiEvent.emit(LevelUiEvent.NavigateToLevel(1))
+            updateSuccessState { it.copy(showRestartOptions = false) }
+        }
     }
 
     fun onRestartClicked() {
@@ -142,10 +152,12 @@ class LevelViewModel @Inject constructor(
                             val nextLevelId = currentState.board.level.id + 1
                             if (!currentState.isAdsRemoved && nextLevelId % 3 == 0) {
                                 _uiEvent.emit(LevelUiEvent.ShowInterstitial {
-                                    loadLevel(nextLevelId)
+                                    viewModelScope.launch {
+                                        _uiEvent.emit(LevelUiEvent.NavigateToLevel(nextLevelId))
+                                    }
                                 })
                             } else {
-                                loadLevel(nextLevelId)
+                                _uiEvent.emit(LevelUiEvent.NavigateToLevel(nextLevelId))
                             }
                         } else {
                             _uiState.value = currentState.copy(

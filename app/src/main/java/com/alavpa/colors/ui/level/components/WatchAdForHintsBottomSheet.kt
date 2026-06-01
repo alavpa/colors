@@ -71,18 +71,18 @@ fun WatchAdForHintsBottomSheetPreview() {
                 .padding(16.dp)
         ) {
             Text(
-                text = "Out of Hints!",
+                text = stringResource(R.string.out_of_hints_title),
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold
             )
             Spacer(modifier = Modifier.padding(8.dp))
-            Text("Watch a short video to get 3 hints for free and continue playing.")
+            Text(stringResource(R.string.out_of_hints_message))
             Spacer(modifier = Modifier.padding(16.dp))
             Button(
                 onClick = { },
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Watch Ad for 3 Hints")
+                Text(stringResource(R.string.watch_ad_for_hints))
             }
         }
     }

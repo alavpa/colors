@@ -47,15 +47,21 @@ import com.alavpa.colors.ui.level.components.WatchAdForHintsBottomSheet
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LevelScreen(
+    levelId: Int?,
     viewModel: LevelViewModel,
     adManager: AdManager,
     soundManager: SoundManager,
+    onNavigateToLevel: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
     val resources = LocalResources.current
     val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(levelId) {
+        viewModel.onScreenStarted(levelId)
+    }
 
     LaunchedEffect(Unit) {
         viewModel.uiEvent.collect { event ->
@@ -76,6 +82,10 @@ fun LevelScreen(
                     if (result == SnackbarResult.ActionPerformed) {
                         event.onConfirmed()
                     }
+                }
+
+                is LevelUiEvent.NavigateToLevel -> {
+                    onNavigateToLevel(event.levelId)
                 }
             }
         }
