@@ -1,0 +1,38 @@
+name: Android Debug Build
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Build Debug APK
+        run: ./gradlew assembleDebug
+        env:
+          ADMOBAPPID_DEBUG: ${{ secrets.ADMOB_APP_ID_DEBUG }}
+          ADMOB_BANNER_ID_DEBUG: ${{ secrets.ADMOB_BANNER_ID_DEBUG }}
+          ADMOB_INTERSTITIAL_ID_DEBUG: ${{ secrets.ADMOB_INTERSTITIAL_ID_DEBUG }}
+          ADMOB_REWARDED_ID_DEBUG: ${{ secrets.ADMOB_REWARDED_ID_DEBUG }}
+
+      - name: Upload Debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-debug-apk
+          path: app/build/outputs/apk/debug/*.apk

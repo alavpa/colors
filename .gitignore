@@ -9,3 +9,7 @@
 .cxx
 local.properties
 /.ai
+.kotlin
+release
+*.jks
+*.jks.base64

@@ -32,12 +32,34 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        val appId = localProperties.getProperty("admob.app_id") ?: ""
+        val appId =
+            localProperties.getProperty("admob.app_id") ?: System.getenv("ADMOBAPPID_DEBUG") ?: ""
         manifestPlaceholders["admobAppId"] = appId
 
-        buildConfigField("String", "ADMOB_BANNER_ID", "\"${localProperties.getProperty("admob.banner_id") ?: ""}\"")
-        buildConfigField("String", "ADMOB_INTERSTITIAL_ID", "\"${localProperties.getProperty("admob.interstitial_id") ?: ""}\"")
-        buildConfigField("String", "ADMOB_REWARDED_ID", "\"${localProperties.getProperty("admob.rewarded_id") ?: ""}\"")
+        buildConfigField(
+            "String",
+            "ADMOB_BANNER_ID",
+            "\"${localProperties.getProperty("admob.banner_id") ?: System.getenv("ADMOB_BANNER_ID_DEBUG") ?: ""}\""
+        )
+        buildConfigField(
+            "String",
+            "ADMOB_INTERSTITIAL_ID",
+            "\"${localProperties.getProperty("admob.interstitial_id") ?: System.getenv("ADMOB_INTERSTITIAL_ID_DEBUG") ?: ""}\""
+        )
+        buildConfigField(
+            "String",
+            "ADMOB_REWARDED_ID",
+            "\"${localProperties.getProperty("admob.rewarded_id") ?: System.getenv("ADMOB_REWARDED_ID_DEBUG") ?: ""}\""
+        )
+    }
+
+    signingConfigs {
+        create("release") {
+            storeFile = file(System.getenv("RELEASE_KEYSTORE_PATH") ?: "perletagames.jks")
+            storePassword = System.getenv("RELEASE_KEYSTORE_PASSWORD")
+            keyAlias = System.getenv("RELEASE_KEY_ALIAS")
+            keyPassword = System.getenv("RELEASE_KEY_PASSWORD")
+        }
     }
 
     buildTypes {
@@ -48,6 +70,16 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("release")
+
+            // For release builds, prioritize environment variables (e.g., GitHub Secrets)
+            System.getenv("ADMOBAPPID")?.let { manifestPlaceholders["admobAppId"] = it }
+            System.getenv("ADMOB_BANNER_ID")
+                ?.let { buildConfigField("String", "ADMOB_BANNER_ID", "\"$it\"") }
+            System.getenv("ADMOB_INTERSTITIAL_ID")
+                ?.let { buildConfigField("String", "ADMOB_INTERSTITIAL_ID", "\"$it\"") }
+            System.getenv("ADMOB_REWARDED_ID")
+                ?.let { buildConfigField("String", "ADMOB_REWARDED_ID", "\"$it\"") }
         }
     }
     compileOptions {
