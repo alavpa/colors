@@ -6,8 +6,8 @@ import javax.inject.Inject
 
 class LevelFactory @Inject constructor() {
     fun createLevel(levelId: Int): Level {
-        var cols = (levelId + 1) / 2 + 1
-        var rows = levelId / 2 + 1
+        var cols = (levelId + 2) / 2 + 1
+        var rows = (levelId + 1) / 2 + 1
 
         if (cols > GameRules.MAX_COLS) {
             val extra = cols - GameRules.MAX_COLS

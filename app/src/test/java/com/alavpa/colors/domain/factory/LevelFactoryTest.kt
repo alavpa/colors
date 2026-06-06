@@ -38,7 +38,7 @@ class LevelFactoryTest {
             val level = factory.createLevel(i)
             assertTrue(
                 "Color count ${level.colorCount} exceeds cell count ${level.cellCount} at level $i",
-                level.colorCount <= level.cellCount
+                level.colorCount <= level.cellCount,
             )
         }
     }
