@@ -9,6 +9,10 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      checks: write
+      pull-requests: write
 
     steps:
       - name: Checkout code
@@ -30,6 +34,14 @@ jobs:
           ADMOB_BANNER_ID_DEBUG: ${{ secrets.ADMOB_BANNER_ID_DEBUG }}
           ADMOB_INTERSTITIAL_ID_DEBUG: ${{ secrets.ADMOB_INTERSTITIAL_ID_DEBUG }}
           ADMOB_REWARDED_ID_DEBUG: ${{ secrets.ADMOB_REWARDED_ID_DEBUG }}
+
+      - name: Test Report
+        uses: dorny/test-reporter@v1
+        if: always()
+        with:
+          name: Unit Test Results
+          path: "**/build/test-results/test*UnitTest/*.xml"
+          reporter: java-junit
 
       - name: Upload Test Reports
         if: always()
