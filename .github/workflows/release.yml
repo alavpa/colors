@@ -35,14 +35,25 @@ jobs:
           RELEASE_KEYSTORE_PASSWORD: ${{ secrets.RELEASE_KEYSTORE_PASSWORD }}
           RELEASE_KEY_ALIAS: ${{ secrets.RELEASE_KEY_ALIAS }}
           RELEASE_KEY_PASSWORD: ${{ secrets.RELEASE_KEY_PASSWORD }}
+          # Use the GitHub Run Number as the version code to ensure uniqueness
+          VERSION_CODE: ${{ github.run_number }}
 
-      - name: Upload APK
+      - name: Upload to Google Play Internal Testing
+        uses: r0adkll/upload-google-play@v1.1.5
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.SERVICE_ACCOUNT_JSON }}
+          packageName: com.alavpa.colors
+          releaseFiles: app/build/outputs/bundle/release/*.aab
+          track: internal
+          status: completed
+
+      - name: Upload APK Artifact
         uses: actions/upload-artifact@v7
         with:
           name: app-release-apk
           path: app/build/outputs/apk/release/*.apk
 
-      - name: Upload AAB
+      - name: Upload AAB Artifact
         uses: actions/upload-artifact@v7
         with:
           name: app-release-aab
