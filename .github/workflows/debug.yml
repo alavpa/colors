@@ -36,7 +36,7 @@ jobs:
           ADMOB_REWARDED_ID_DEBUG: ${{ secrets.ADMOB_REWARDED_ID_DEBUG }}
 
       - name: Test Report
-        uses: dorny/test-reporter@v1.9.1
+        uses: dorny/test-reporter@v3
         if: always()
         with:
           name: Unit Test Results
