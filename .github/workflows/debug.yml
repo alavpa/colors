@@ -42,6 +42,9 @@ jobs:
           name: Unit Test Results
           path: "**/test-results/**/*.xml"
           reporter: java-junit
+          list-tests: 'failed' # Only list failed tests to keep the summary clean
+          list-suites: 'failed'
+          fail-on-error: 'true'
 
       - name: Upload Test Reports
         if: always()
