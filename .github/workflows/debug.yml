@@ -29,7 +29,12 @@ jobs:
 
       - name: Decode Google Services
         run: |
-          echo "${{ secrets.GOOGLE_SERVICES_JSON }}" | base64 --decode > app/google-services.json
+          echo "${{ secrets.GOOGLE_SERVICES_JSON }}" | tr -d '[:space:]' | base64 --decode > app/google-services.json
+          # Verify if the file is a valid JSON and stop if it's not
+          if ! jq empty app/google-services.json; then
+            echo "Error: Google Services JSON is NOT a valid JSON"
+            exit 1
+          fi
 
       - name: Run Unit Tests
         run: ./gradlew test
