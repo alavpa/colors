@@ -18,16 +18,12 @@ val localProperties = Properties().apply {
 
 android {
     namespace = "com.alavpa.colors"
-    compileSdk {
-        version = release(36) {
-            minorApiLevel = 1
-        }
-    }
 
     defaultConfig {
         applicationId = "com.alavpa.colors"
         minSdk = 24
         targetSdk = 37
+        compileSdk = 37
         versionCode = System.getenv("VERSION_CODE")?.toInt() ?: 1
         versionName = "1.0"
 
@@ -121,6 +117,7 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
     ksp(libs.hilt.compiler)
+    ksp(libs.metadata.library)
     testImplementation(libs.junit)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
