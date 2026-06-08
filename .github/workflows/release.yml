@@ -24,12 +24,16 @@ jobs:
         uses: gradle/actions/setup-gradle@v6
 
       - name: Decode Keystore
+        env:
+          RELEASE_KEYSTORE: ${{ secrets.RELEASE_KEYSTORE }}
         run: |
-          printf "%s" "${{ secrets.RELEASE_KEYSTORE }}" | base64 --decode > app/perletagames.jks
+          echo "$RELEASE_KEYSTORE" | base64 --decode > app/perletagames.jks
 
       - name: Decode Google Services
+        env:
+          GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
         run: |
-          printf "%s" "${{ secrets.GOOGLE_SERVICES_JSON }}" | base64 --decode > app/google-services.json
+          echo "$GOOGLE_SERVICES_JSON" | base64 --decode > app/google-services.json
 
       - name: Build Release
         run: ./gradlew assembleRelease bundleRelease
