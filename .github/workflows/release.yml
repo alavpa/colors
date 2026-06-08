@@ -59,7 +59,7 @@ jobs:
           serviceAccountJson: ${{ steps.auth.outputs.credentials_file_path }}
           packageName: com.alavpa.colors
           releaseFiles: app/build/outputs/bundle/release/*.aab
-          track: internal
+          tracks: internal
           status: completed
 
       - name: Upload APK Artifact
