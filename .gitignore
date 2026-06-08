@@ -12,4 +12,5 @@ local.properties
 .kotlin
 release
 *.jks
-*.jks.base64
+*.base64
+app/google-services.json

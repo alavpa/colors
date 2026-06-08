@@ -27,6 +27,10 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v6
 
+      - name: Decode Google Services
+        run: |
+          printf "%s" "${{ secrets.GOOGLE_SERVICES_JSON }}" | base64 --decode > app/google-services.json
+
       - name: Run Unit Tests
         run: ./gradlew test
         env:

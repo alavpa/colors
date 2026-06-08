@@ -2,6 +2,7 @@ import java.util.Properties
 
 plugins {
     alias(libs.plugins.android.application)
+    alias(libs.plugins.google.services)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
@@ -63,6 +64,11 @@ android {
     }
 
     buildTypes {
+        debug {
+            applicationIdSuffix = ".debug"
+            versionNameSuffix = "-debug"
+            manifestPlaceholders["appName"] = "Colors (Debug)"
+        }
         release {
             isMinifyEnabled = true
             isShrinkResources = true
@@ -71,6 +77,7 @@ android {
                 "proguard-rules.pro"
             )
             signingConfig = signingConfigs.getByName("release")
+            manifestPlaceholders["appName"] = "Colors"
 
             // For release builds, prioritize environment variables (e.g., GitHub Secrets)
             System.getenv("ADMOBAPPID")?.let { manifestPlaceholders["admobAppId"] = it }
@@ -111,6 +118,8 @@ dependencies {
     implementation(libs.androidx.hilt.lifecycle.viewmodel.compose)
     implementation(libs.play.services.ads)
     implementation(libs.androidx.datastore.preferences)
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics)
     ksp(libs.hilt.compiler)
     testImplementation(libs.junit)
     androidTestImplementation(platform(libs.androidx.compose.bom))
