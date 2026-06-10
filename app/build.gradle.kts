@@ -26,7 +26,7 @@ android {
         targetSdk = 37
         compileSdk = 37
         versionCode = System.getenv("VERSION_CODE")?.toInt() ?: 1
-        versionName = "1.0"
+        versionName = "1.0.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -53,10 +53,12 @@ android {
 
     signingConfigs {
         create("release") {
-            storeFile = file(System.getenv("RELEASE_KEYSTORE_PATH") ?: "perletagames.jks")
+            storeFile = file(System.getenv("RELEASE_KEYSTORE_PATH") ?: "../perletagames.jks")
             storePassword = System.getenv("RELEASE_KEYSTORE_PASSWORD")
-            keyAlias = System.getenv("RELEASE_KEY_ALIAS")
-            keyPassword = System.getenv("RELEASE_KEY_PASSWORD")
+                ?: localProperties.getProperty("storePassword")
+            keyAlias = System.getenv("RELEASE_KEY_ALIAS") ?: localProperties.getProperty("keyAlias")
+            keyPassword =
+                System.getenv("RELEASE_KEY_PASSWORD") ?: localProperties.getProperty("keyPassword")
         }
     }
 
@@ -78,15 +80,6 @@ android {
             )
             signingConfig = signingConfigs.getByName("release")
             manifestPlaceholders["appName"] = "Colors"
-
-            // For release builds, prioritize environment variables (e.g., GitHub Secrets)
-            System.getenv("ADMOBAPPID")?.let { manifestPlaceholders["admobAppId"] = it }
-            System.getenv("ADMOB_BANNER_ID")
-                ?.let { buildConfigField("String", "ADMOB_BANNER_ID", "\"$it\"") }
-            System.getenv("ADMOB_INTERSTITIAL_ID")
-                ?.let { buildConfigField("String", "ADMOB_INTERSTITIAL_ID", "\"$it\"") }
-            System.getenv("ADMOB_REWARDED_ID")
-                ?.let { buildConfigField("String", "ADMOB_REWARDED_ID", "\"$it\"") }
         }
     }
     compileOptions {
