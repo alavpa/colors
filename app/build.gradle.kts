@@ -31,23 +31,23 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         val appId =
-            localProperties.getProperty("admob.app_id") ?: System.getenv("ADMOBAPPID_DEBUG") ?: ""
+            localProperties.getProperty("admob.app_id") ?: System.getenv("ADMOBAPPID") ?: ""
         manifestPlaceholders["admobAppId"] = appId
 
         buildConfigField(
             "String",
             "ADMOB_BANNER_ID",
-            "\"${localProperties.getProperty("admob.banner_id") ?: System.getenv("ADMOB_BANNER_ID_DEBUG") ?: ""}\""
+            "\"${localProperties.getProperty("admob.banner_id") ?: System.getenv("ADMOB_BANNER_ID") ?: ""}\""
         )
         buildConfigField(
             "String",
             "ADMOB_INTERSTITIAL_ID",
-            "\"${localProperties.getProperty("admob.interstitial_id") ?: System.getenv("ADMOB_INTERSTITIAL_ID_DEBUG") ?: ""}\""
+            "\"${localProperties.getProperty("admob.interstitial_id") ?: System.getenv("ADMOB_INTERSTITIAL_ID") ?: ""}\""
         )
         buildConfigField(
             "String",
             "ADMOB_REWARDED_ID",
-            "\"${localProperties.getProperty("admob.rewarded_id") ?: System.getenv("ADMOB_REWARDED_ID_DEBUG") ?: ""}\""
+            "\"${localProperties.getProperty("admob.rewarded_id") ?: System.getenv("ADMOB_REWARDED_ID") ?: ""}\""
         )
     }
 

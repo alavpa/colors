@@ -24,9 +24,9 @@
 -keep class * extends androidx.work.ListenableWorker
 
 # Room
--keep class * extends androidx.room.RoomDatabase
--keep class * extends androidx.room.Entity
--dontwarn androidx.room.**
+#-keep class * extends androidx.room.RoomDatabase
+#-keep class * extends androidx.room.Entity
+#-dontwarn androidx.room.**
 
 # General
 -keepattributes SourceFile,LineNumberTable
