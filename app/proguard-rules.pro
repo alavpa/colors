@@ -1,21 +1,26 @@
-# Add project specific ProGuard rules here.
-# You can control the set of applied configuration files using the
-# proguardFiles setting in build.gradle.
-#
-# For more details, see
-#   http://developer.android.com/guide/developing/tools/proguard.html
+# App Startup
+-keep class androidx.startup.** { *; }
+-keep class * implements androidx.startup.Initializer {
+    public <init>();
+}
 
-# If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
-# class:
-#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
-#   public *;
-#}
+# Kotlin Serialization
+-keepattributes *Annotation*, EnclosingMethod, InnerClasses
+-keep,allowobfuscation,allowshrinking class kotlinx.serialization.json.** { *; }
+-keepclassmembernames class com.alavpa.colors.ui.navigation.** {
+    *** Companion;
+    *** $serializer;
+}
+-keep @kotlinx.serialization.Serializable class com.alavpa.colors.ui.navigation.** { *; }
 
-# Uncomment this to preserve the line number information for
-# debugging stack traces.
-#-keepattributes SourceFile,LineNumberTable
+# Hilt
+-keep class com.google.dagger.hilt.** { *; }
+-keep @com.google.dagger.hilt.android.lifecycle.HiltViewModel class *
+-keep class * extends androidx.lifecycle.ViewModel
 
-# If you keep the line number information, uncomment this to
-# hide the original source file name.
-#-renamesourcefileattribute SourceFile
+# AdMob
+-keep class com.google.android.gms.ads.** { *; }
+-keep class com.google.ads.** { *; }
+
+# Firebase
+-keep class com.google.firebase.** { *; }
