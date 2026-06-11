@@ -3,62 +3,75 @@
 **Effective Date: June 10, 2026**
 
 This Privacy Policy describes how **Colors** ("we", "our", or "us") collects, uses, and shares
-information when you use our mobile application (the "Game").
+information when you use our mobile application (the "Game") in compliance with Google Play's Data
+Safety requirements.
 
 ## 1. Information We Collect Automatically
 
-When you use the Game, we automatically collect certain information about your device and how you
-interact with the Game. This includes:
+To provide a functional and stable game experience, we use third-party SDKs that automatically
+collect certain data types. We do not collect personal identifiers like your name, email address, or
+phone number.
 
-* **Device Information**: Hardware model, operating system version, unique device identifiers, and
-  mobile network information.
-* **Usage Data**: Information about your game progress, levels completed, time spent in the app, and
-  crash reports.
-* **Advertising IDs**: We use Google Advertising IDs (GAID) to provide personalized advertisements.
+### A. Location Data
 
-## 2. Third-Party Services and Data Collection
+* **Data Type**: Coarse Location (e.g., city or country).
+* **How it's collected**: Derived from your IP address by third-party SDKs.
+* **Purpose**: Analytics and showing relevant advertisements.
 
-We use third-party services that may collect information used to identify you.
+### B. Device and Other Identifiers
 
-### A. Advertising (Google AdMob)
+* **Data Type**: Advertising ID (GAID), Firebase installation ID, and other device-specific
+  identifiers.
+* **Purpose**: Advertising, Analytics, and App Functionality (e.g., ensuring unique sessions).
 
-Our Game includes advertisements served by **Google AdMob**. AdMob may use cookies and device
-identifiers to:
+### C. App Activity and Performance
 
-* Show personalized ads based on your interests.
-* Measure the effectiveness of ad campaigns.
-* Prevent fraud and abuse.
+* **Data Type**:
+    * **App interactions**: Clicks, levels completed, and session duration.
+    * **Crash logs**: Technical details about app crashes.
+    * **Diagnostics**: App performance metrics.
+* **Purpose**: Analytics (understanding how the game is played) and Diagnostics (fixing bugs and
+  improving stability).
 
-For more information on how Google uses data, please
-visit: [How Google uses information from sites or apps that use our services](https://policies.google.com/technologies/partner-sites).
+## 2. Third-Party Services
 
-### B. Analytics and Stability (Firebase)
+The following third-party services are integrated into the Game and handle the data mentioned above:
 
-We use **Firebase Analytics** and **Firebase Crashlytics** to improve our Game:
+### Google AdMob (Advertising)
 
-* **Firebase Analytics**: Helps us understand how users engage with the Game (e.g., which levels are
-  most popular).
-* **Firebase Crashlytics**: Helps us identify and fix bugs by providing technical logs when the Game
-  crashes.
+We use AdMob to serve advertisements. AdMob uses device identifiers and coarse location to provide
+personalized ads and measure performance.
 
-## 3. Data Retention
+* [Google's Advertising Privacy Policy](https://policies.google.com/technologies/ads)
 
-We do not collect personal information like your name or email address. The anonymous usage data and
-advertising identifiers are retained as long as necessary to provide analytics and serve
-advertisements.
+### Firebase (Analytics & Diagnostics)
+
+We use Firebase Analytics and Firebase Crashlytics to monitor game stability and improve user
+experience.
+
+* [Google Analytics for Firebase Privacy](https://firebase.google.com/support/privacy)
+
+## 3. Data Sharing and Security
+
+* **Encryption**: All data collected by third-party SDKs is encrypted in transit using
+  industry-standard protocols (HTTPS).
+* **Sharing**: We do not "sell" your data. Data is shared with the service providers (
+  Google/Firebase) only for the purposes stated above (advertising and analytics).
+* **Retention**: Data is retained as per the policies of Google and Firebase.
 
 ## 4. Children's Privacy
 
-These Services do not address anyone under the age of 13. We do not knowingly collect personally
-identifiable information from children under 13. In the case we discover that a child under 13 has
-provided us with personal information, we immediately delete this from our servers.
+The Game is not intended for children under the age of 13. We do not knowingly collect personal
+information from children. If we become aware that a child under 13 has provided us with data, we
+will take steps to delete it from our servers.
 
-## 5. Your Choices and Opt-Out
+## 5. Your Choices
 
-* **Reset Advertising ID**: You can reset your device’s advertising ID or opt-out of personalized
-  ads in your Android device settings (**Settings > Google > Ads**).
-* **Permissions**: You can manage the permissions granted to the Game (like Internet access) via
-  your device settings.
+You can limit the data collected by:
+
+1. **Resetting your Advertising ID**: Go to **Settings > Google > Ads** on your Android device.
+2. **Clearing App Data**: This resets local identifiers used for analytics.
+3. **Permissions**: You can manage app permissions in your device's settings menu.
 
 ## 6. Changes to This Privacy Policy
 
@@ -67,5 +80,5 @@ new Privacy Policy on this page.
 
 ## 7. Contact Us
 
-If you have any questions or suggestions about our Privacy Policy, do not hesitate to contact us at:
+If you have any questions regarding this Privacy Policy or our data practices, please contact us at:
 perletagames@gmail.com.
