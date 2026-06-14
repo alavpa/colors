@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.milliseconds
 
 sealed interface LevelUiEvent {
     data class ShowInterstitial(val onDismissed: () -> Unit) : LevelUiEvent
@@ -235,9 +236,11 @@ class LevelViewModel @Inject constructor(
     fun onHintClicked() {
         val currentState = _uiState.value
         if (currentState is LevelUiState.Success) {
+            analyticsManager.trackHintClicked()
             viewModelScope.launch {
                 if (currentState.remainingHints > 0) {
                     _uiEvent.emit(LevelUiEvent.ShowHintConfirmation {
+                        analyticsManager.trackHintConfirmed()
                         useHint()
                     })
                 } else {
@@ -269,7 +272,7 @@ class LevelViewModel @Inject constructor(
                     )
 
                     // Remove hint after delay
-                    kotlinx.coroutines.delay(GameRules.HINT_DELAY_MS)
+                    kotlinx.coroutines.delay(GameRules.HINT_DELAY_MS.milliseconds)
                     updateSuccessState { it.copy(hintedColor = null) }
                 }
             }

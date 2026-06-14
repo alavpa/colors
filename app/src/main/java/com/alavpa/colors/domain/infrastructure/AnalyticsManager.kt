@@ -5,4 +5,6 @@ interface AnalyticsManager {
     fun trackLevelComplete(levelId: Int)
     fun setCurrentLevel(levelId: Int)
     fun trackAppOpen()
+    fun trackHintClicked()
+    fun trackHintConfirmed()
 }

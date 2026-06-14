@@ -30,4 +30,12 @@ class AnalyticsManagerImpl @Inject constructor(
     override fun trackAppOpen() {
         firebaseAnalytics.logEvent(FirebaseAnalytics.Event.APP_OPEN, null)
     }
+
+    override fun trackHintClicked() {
+        firebaseAnalytics.logEvent("hint_clicked", null)
+    }
+
+    override fun trackHintConfirmed() {
+        firebaseAnalytics.logEvent("hint_confirmed", null)
+    }
 }
