@@ -44,7 +44,13 @@ android {
 
     signingConfigs {
         create("release") {
-            storeFile = file(getLocalPropertyOrSystemEnv("keystorePath", "RELEASE_KEYSTORE_PATH"))
+            storeFile = file(
+                getLocalPropertyOrSystemEnv(
+                    "keystorePath",
+                    "RELEASE_KEYSTORE_PATH",
+                    "perletagames.jks"
+                )
+            )
             storePassword = getLocalPropertyOrSystemEnv(
                 "storePassword",
                 "RELEASE_KEYSTORE_PASSWORD"
