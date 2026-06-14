@@ -9,4 +9,6 @@ interface AnalyticsManager {
     fun trackHintConfirmed()
     fun trackLevelRetry(levelId: Int)
     fun trackMistakeOccurred(levelId: Int)
+    fun trackAdRewardRequested(adUnit: String)
+    fun trackAdRewardReceived(adUnit: String)
 }

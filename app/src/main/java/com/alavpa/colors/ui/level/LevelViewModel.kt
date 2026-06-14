@@ -193,9 +193,11 @@ class LevelViewModel @Inject constructor(
             if (currentState.isAdsRemoved) {
                 updateSuccessState { it.copy(showUndoDialog = false) }
             } else {
+                analyticsManager.trackAdRewardRequested("undo")
                 viewModelScope.launch {
                     _uiEvent.emit(LevelUiEvent.ShowRewarded(
                         onRewarded = {
+                            analyticsManager.trackAdRewardReceived("undo")
                             updateSuccessState { it.copy(showUndoDialog = false) }
                         },
                         onDismissed = {
@@ -221,9 +223,11 @@ class LevelViewModel @Inject constructor(
     }
 
     fun onWatchAdForHintsClicked() {
+        analyticsManager.trackAdRewardRequested("hints")
         viewModelScope.launch {
             _uiEvent.emit(LevelUiEvent.ShowRewarded(
                 onRewarded = {
+                    analyticsManager.trackAdRewardReceived("hints")
                     viewModelScope.launch {
                         val currentHints = userPreferencesRepository.remainingHints.first()
                         userPreferencesRepository.setRemainingHints(currentHints + GameRules.REWARDS_PER_AD)

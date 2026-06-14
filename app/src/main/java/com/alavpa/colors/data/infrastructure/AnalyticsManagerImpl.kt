@@ -52,4 +52,18 @@ class AnalyticsManagerImpl @Inject constructor(
         }
         firebaseAnalytics.logEvent("mistake_occurred", bundle)
     }
+
+    override fun trackAdRewardRequested(adUnit: String) {
+        val bundle = Bundle().apply {
+            putString("ad_unit", adUnit)
+        }
+        firebaseAnalytics.logEvent("ad_reward_requested", bundle)
+    }
+
+    override fun trackAdRewardReceived(adUnit: String) {
+        val bundle = Bundle().apply {
+            putString("ad_unit", adUnit)
+        }
+        firebaseAnalytics.logEvent("ad_reward_received", bundle)
+    }
 }
