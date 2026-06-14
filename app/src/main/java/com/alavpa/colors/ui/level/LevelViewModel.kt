@@ -2,6 +2,7 @@ package com.alavpa.colors.ui.level
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.alavpa.colors.domain.infrastructure.AnalyticsManager
 import com.alavpa.colors.domain.model.GameRules
 import com.alavpa.colors.domain.repository.UserPreferencesRepository
 import com.alavpa.colors.domain.usecase.CellClickResult
@@ -30,7 +31,8 @@ class LevelViewModel @Inject constructor(
     private val getLevelUseCase: GetLevelUseCase,
     private val processCellClickUseCase: ProcessCellClickUseCase,
     private val getHintUseCase: GetHintUseCase,
-    private val userPreferencesRepository: UserPreferencesRepository
+    private val userPreferencesRepository: UserPreferencesRepository,
+    private val analyticsManager: AnalyticsManager
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<LevelUiState>(LevelUiState.Loading)
@@ -89,6 +91,9 @@ class LevelViewModel @Inject constructor(
                 val hints = userPreferencesRepository.remainingHints.first()
                 val isMuted = userPreferencesRepository.isMuted.first()
                 userPreferencesRepository.setCurrentLevel(levelId)
+
+                analyticsManager.setCurrentLevel(levelId)
+                analyticsManager.trackLevelStart(levelId)
 
                 _uiState.value = LevelUiState.Success(
                     board = board,
@@ -149,6 +154,7 @@ class LevelViewModel @Inject constructor(
                 when (result) {
                     is CellClickResult.Success -> {
                         if (result.isLevelCompleted) {
+                            analyticsManager.trackLevelComplete(currentState.board.level.id)
                             val nextLevelId = currentState.board.level.id + 1
                             if (!currentState.isAdsRemoved && nextLevelId % 3 == 0) {
                                 _uiEvent.emit(LevelUiEvent.ShowInterstitial {

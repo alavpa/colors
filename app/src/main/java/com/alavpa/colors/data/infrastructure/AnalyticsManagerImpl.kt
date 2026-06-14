@@ -1,0 +1,29 @@
+package com.alavpa.colors.data.infrastructure
+
+import android.os.Bundle
+import com.alavpa.colors.domain.infrastructure.AnalyticsManager
+import com.google.firebase.analytics.FirebaseAnalytics
+import javax.inject.Inject
+
+class AnalyticsManagerImpl @Inject constructor(
+    private val firebaseAnalytics: FirebaseAnalytics
+) : AnalyticsManager {
+
+    override fun trackLevelStart(levelId: Int) {
+        val bundle = Bundle().apply {
+            putInt(FirebaseAnalytics.Param.LEVEL, levelId)
+        }
+        firebaseAnalytics.logEvent(FirebaseAnalytics.Event.LEVEL_START, bundle)
+    }
+
+    override fun trackLevelComplete(levelId: Int) {
+        val bundle = Bundle().apply {
+            putInt(FirebaseAnalytics.Param.LEVEL, levelId)
+        }
+        firebaseAnalytics.logEvent(FirebaseAnalytics.Event.LEVEL_END, bundle)
+    }
+
+    override fun setCurrentLevel(levelId: Int) {
+        firebaseAnalytics.setUserProperty("current_level", levelId.toString())
+    }
+}
