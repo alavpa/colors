@@ -26,4 +26,8 @@ class AnalyticsManagerImpl @Inject constructor(
     override fun setCurrentLevel(levelId: Int) {
         firebaseAnalytics.setUserProperty("current_level", levelId.toString())
     }
+
+    override fun trackAppOpen() {
+        firebaseAnalytics.logEvent(FirebaseAnalytics.Event.APP_OPEN, null)
+    }
 }

@@ -10,6 +10,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.alavpa.colors.domain.infrastructure.AdManager
+import com.alavpa.colors.domain.infrastructure.AnalyticsManager
 import com.alavpa.colors.domain.infrastructure.SoundManager
 import com.alavpa.colors.ui.level.LevelScreen
 import com.alavpa.colors.ui.level.LevelViewModel
@@ -26,8 +27,12 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var soundManager: SoundManager
 
+    @Inject
+    lateinit var analyticsManager: AnalyticsManager
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        analyticsManager.trackAppOpen()
         enableEdgeToEdge()
         adManager.loadInterstitial(this)
         adManager.loadRewarded(this)
