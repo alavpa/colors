@@ -23,7 +23,6 @@ import kotlin.time.Duration.Companion.milliseconds
 sealed interface LevelUiEvent {
     data class ShowInterstitial(val onDismissed: () -> Unit) : LevelUiEvent
     data class ShowRewarded(val onRewarded: () -> Unit, val onDismissed: () -> Unit) : LevelUiEvent
-    data class ShowHintConfirmation(val onConfirmed: () -> Unit) : LevelUiEvent
     data class NavigateToLevel(val levelId: Int) : LevelUiEvent
 }
 
@@ -237,15 +236,11 @@ class LevelViewModel @Inject constructor(
         val currentState = _uiState.value
         if (currentState is LevelUiState.Success) {
             analyticsManager.trackHintClicked()
-            viewModelScope.launch {
-                if (currentState.remainingHints > 0) {
-                    _uiEvent.emit(LevelUiEvent.ShowHintConfirmation {
-                        analyticsManager.trackHintConfirmed()
-                        useHint()
-                    })
-                } else {
-                    updateSuccessState { it.copy(showWatchAdForHintsDialog = true) }
-                }
+            if (currentState.remainingHints > 0) {
+                analyticsManager.trackHintConfirmed()
+                useHint()
+            } else {
+                updateSuccessState { it.copy(showWatchAdForHintsDialog = true) }
             }
         }
     }

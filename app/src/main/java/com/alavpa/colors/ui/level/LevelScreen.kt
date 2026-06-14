@@ -20,7 +20,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -32,7 +31,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.alavpa.colors.R
@@ -56,7 +54,6 @@ fun LevelScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
-    val resources = LocalResources.current
     val snackbarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(levelId) {
@@ -72,16 +69,6 @@ fun LevelScreen(
                 }
                 is LevelUiEvent.ShowRewarded -> {
                     adManager.showRewarded(activity, event.onRewarded, event.onDismissed)
-                }
-                is LevelUiEvent.ShowHintConfirmation -> {
-                    val result = snackbarHostState.showSnackbar(
-                        message = resources.getString(R.string.use_hint_message),
-                        actionLabel = resources.getString(R.string.confirm),
-                        withDismissAction = true
-                    )
-                    if (result == SnackbarResult.ActionPerformed) {
-                        event.onConfirmed()
-                    }
                 }
 
                 is LevelUiEvent.NavigateToLevel -> {
