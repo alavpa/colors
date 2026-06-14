@@ -125,6 +125,7 @@ class LevelViewModel @Inject constructor(
 
     fun resetBoard() {
         updateSuccessState {
+            analyticsManager.trackLevelRetry(it.board.level.id)
             it.copy(
                 board = it.initialBoard,
                 currentColorBeingCleared = null,
@@ -174,6 +175,7 @@ class LevelViewModel @Inject constructor(
                     }
 
                     CellClickResult.Reset -> {
+                        analyticsManager.trackMistakeOccurred(currentState.board.level.id)
                         _uiState.value = currentState.copy(showUndoDialog = true)
                     }
 

@@ -7,4 +7,6 @@ interface AnalyticsManager {
     fun trackAppOpen()
     fun trackHintClicked()
     fun trackHintConfirmed()
+    fun trackLevelRetry(levelId: Int)
+    fun trackMistakeOccurred(levelId: Int)
 }

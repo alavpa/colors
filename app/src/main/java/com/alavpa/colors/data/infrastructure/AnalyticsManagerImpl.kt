@@ -38,4 +38,18 @@ class AnalyticsManagerImpl @Inject constructor(
     override fun trackHintConfirmed() {
         firebaseAnalytics.logEvent("hint_confirmed", null)
     }
+
+    override fun trackLevelRetry(levelId: Int) {
+        val bundle = Bundle().apply {
+            putInt(FirebaseAnalytics.Param.LEVEL, levelId)
+        }
+        firebaseAnalytics.logEvent("level_retry", bundle)
+    }
+
+    override fun trackMistakeOccurred(levelId: Int) {
+        val bundle = Bundle().apply {
+            putInt(FirebaseAnalytics.Param.LEVEL, levelId)
+        }
+        firebaseAnalytics.logEvent("mistake_occurred", bundle)
+    }
 }
