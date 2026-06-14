@@ -137,7 +137,9 @@ class LevelViewModel @Inject constructor(
     fun toggleMute() {
         viewModelScope.launch {
             val currentMuted = userPreferencesRepository.isMuted.first()
-            userPreferencesRepository.setMuted(!currentMuted)
+            val newMuted = !currentMuted
+            userPreferencesRepository.setMuted(newMuted)
+            analyticsManager.trackMuteToggled(newMuted)
         }
     }
 

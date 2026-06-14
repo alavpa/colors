@@ -66,4 +66,11 @@ class AnalyticsManagerImpl @Inject constructor(
         }
         firebaseAnalytics.logEvent("ad_reward_received", bundle)
     }
+
+    override fun trackMuteToggled(isMuted: Boolean) {
+        val bundle = Bundle().apply {
+            putBoolean("is_muted", isMuted)
+        }
+        firebaseAnalytics.logEvent("mute_toggle", bundle)
+    }
 }

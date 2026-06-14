@@ -11,4 +11,5 @@ interface AnalyticsManager {
     fun trackMistakeOccurred(levelId: Int)
     fun trackAdRewardRequested(adUnit: String)
     fun trackAdRewardReceived(adUnit: String)
+    fun trackMuteToggled(isMuted: Boolean)
 }
