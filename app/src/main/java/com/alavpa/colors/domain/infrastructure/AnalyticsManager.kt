@@ -12,4 +12,5 @@ interface AnalyticsManager {
     fun trackAdRewardRequested(adUnit: String)
     fun trackAdRewardReceived(adUnit: String)
     fun trackMuteToggled(isMuted: Boolean)
+    fun trackOutOfHints()
 }

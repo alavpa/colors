@@ -73,4 +73,8 @@ class AnalyticsManagerImpl @Inject constructor(
         }
         firebaseAnalytics.logEvent("mute_toggle", bundle)
     }
+
+    override fun trackOutOfHints() {
+        firebaseAnalytics.logEvent("out_of_hints_dialog_shown", null)
+    }
 }

@@ -248,6 +248,7 @@ class LevelViewModel @Inject constructor(
                 analyticsManager.trackHintConfirmed()
                 useHint()
             } else {
+                analyticsManager.trackOutOfHints()
                 updateSuccessState { it.copy(showWatchAdForHintsDialog = true) }
             }
         }
