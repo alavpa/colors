@@ -30,35 +30,27 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        val appId =
-            localProperties.getProperty("admob.app_id") ?: System.getenv("ADMOBAPPID") ?: ""
-        manifestPlaceholders["admobAppId"] = appId
-
-        buildConfigField(
-            "String",
-            "ADMOB_BANNER_ID",
-            "\"${localProperties.getProperty("admob.banner_id") ?: System.getenv("ADMOB_BANNER_ID") ?: ""}\""
-        )
-        buildConfigField(
-            "String",
-            "ADMOB_INTERSTITIAL_ID",
-            "\"${localProperties.getProperty("admob.interstitial_id") ?: System.getenv("ADMOB_INTERSTITIAL_ID") ?: ""}\""
-        )
-        buildConfigField(
-            "String",
-            "ADMOB_REWARDED_ID",
-            "\"${localProperties.getProperty("admob.rewarded_id") ?: System.getenv("ADMOB_REWARDED_ID") ?: ""}\""
+        setAdMobKeys(
+            appIdKey = "debug.admob.app_id",
+            appIdEnv = "ADMOBAPPID",
+            bannerIdKey = "debug.admob.banner_id",
+            bannerIdEnv = "ADMOB_BANNER_ID",
+            interstitialIdKey = "debug.admob.interstitial_id",
+            interstitialIdEnv = "ADMOB_INTERSTITIAL_ID",
+            rewardedIdKey = "debug.admob.rewarded_id",
+            rewardedIdEnv = "ADMOB_REWARDED_ID"
         )
     }
 
     signingConfigs {
         create("release") {
-            storeFile = file(System.getenv("RELEASE_KEYSTORE_PATH") ?: "../perletagames.jks")
-            storePassword = System.getenv("RELEASE_KEYSTORE_PASSWORD")
-                ?: localProperties.getProperty("storePassword")
-            keyAlias = System.getenv("RELEASE_KEY_ALIAS") ?: localProperties.getProperty("keyAlias")
-            keyPassword =
-                System.getenv("RELEASE_KEY_PASSWORD") ?: localProperties.getProperty("keyPassword")
+            storeFile = file(getLocalPropertyOrSystemEnv("keystorePath", "RELEASE_KEYSTORE_PATH"))
+            storePassword = getLocalPropertyOrSystemEnv(
+                "storePassword",
+                "RELEASE_KEYSTORE_PASSWORD"
+            )
+            keyAlias = getLocalPropertyOrSystemEnv("keyAlias", "RELEASE_KEY_ALIAS")
+            keyPassword = getLocalPropertyOrSystemEnv("keyPassword", "RELEASE_KEY_PASSWORD")
         }
     }
 
@@ -80,6 +72,18 @@ android {
             )
             signingConfig = signingConfigs.getByName("release")
             manifestPlaceholders["appName"] = "Colors"
+
+            setAdMobKeys(
+                appIdKey = "admob.app_id",
+                appIdEnv = "ADMOBAPPID",
+                bannerIdKey = "admob.banner_id",
+                bannerIdEnv = "ADMOB_BANNER_ID",
+                interstitialIdKey = "admob.interstitial_id",
+                interstitialIdEnv = "ADMOB_INTERSTITIAL_ID",
+                rewardedIdKey = "admob.rewarded_id",
+                rewardedIdEnv = "ADMOB_REWARDED_ID",
+                prioritizeEnv = true
+            )
         }
     }
     compileOptions {
@@ -90,6 +94,68 @@ android {
         compose = true
         buildConfig = true
     }
+}
+
+fun com.android.build.api.dsl.VariantDimension.setAdMobKeys(
+    appIdKey: String?,
+    appIdEnv: String,
+    bannerIdKey: String?,
+    bannerIdEnv: String,
+    interstitialIdKey: String?,
+    interstitialIdEnv: String,
+    rewardedIdKey: String?,
+    rewardedIdEnv: String,
+    prioritizeEnv: Boolean = false
+) {
+    manifestPlaceholders["admobAppId"] =
+        getLocalPropertyOrSystemEnv(appIdKey, appIdEnv, prioritizeEnv = prioritizeEnv)
+    buildConfigField(
+        "String",
+        "ADMOB_BANNER_ID",
+        "\"${
+            getLocalPropertyOrSystemEnv(
+                bannerIdKey,
+                bannerIdEnv,
+                prioritizeEnv = prioritizeEnv
+            )
+        }\""
+    )
+    buildConfigField(
+        "String",
+        "ADMOB_INTERSTITIAL_ID",
+        "\"${
+            getLocalPropertyOrSystemEnv(
+                interstitialIdKey,
+                interstitialIdEnv,
+                prioritizeEnv = prioritizeEnv
+            )
+        }\""
+    )
+    buildConfigField(
+        "String",
+        "ADMOB_REWARDED_ID",
+        "\"${
+            getLocalPropertyOrSystemEnv(
+                rewardedIdKey,
+                rewardedIdEnv,
+                prioritizeEnv = prioritizeEnv
+            )
+        }\""
+    )
+}
+
+fun getLocalPropertyOrSystemEnv(
+    localPropertyKey: String?,
+    systemEnvironmentKey: String,
+    defaultValue: String = "",
+    prioritizeEnv: Boolean = false
+): String {
+    if (prioritizeEnv) {
+        System.getenv(systemEnvironmentKey)?.let { return it }
+    }
+    return localProperties.getProperty(localPropertyKey)
+        ?: System.getenv(systemEnvironmentKey)
+        ?: defaultValue
 }
 
 dependencies {
