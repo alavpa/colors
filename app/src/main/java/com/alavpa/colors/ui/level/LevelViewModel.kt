@@ -159,7 +159,7 @@ class LevelViewModel @Inject constructor(
                         if (result.isLevelCompleted) {
                             analyticsManager.trackLevelComplete(currentState.board.level.id)
                             val nextLevelId = currentState.board.level.id + 1
-                            if (!currentState.isAdsRemoved && nextLevelId % 3 == 0) {
+                            if (!currentState.isAdsRemoved && nextLevelId % 7 == 0) {
                                 _uiEvent.emit(LevelUiEvent.ShowInterstitial {
                                     viewModelScope.launch {
                                         _uiEvent.emit(LevelUiEvent.NavigateToLevel(nextLevelId))
